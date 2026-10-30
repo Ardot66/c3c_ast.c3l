@@ -1,0 +1,13 @@
+{
+  "dependency-search-paths": [ "scripts/lib" ],
+  "test-sources": [ "test/**" ],
+  "build-dir": "build",
+  "output": "build",
+  "targets": {
+    "bindgen": {
+      "type": "executable",
+      "dependencies": [ "bindgen" ],
+      "sources-override": ["scripts/c3c_bindgen.c3"]
+    }
+  }
+}
