@@ -92,7 +92,7 @@ fn int main(String[] args)
 		}
 	})!!;
 
-	int? result = process::run({"c3fmt", "-i", "src/c3c.c3i"}, );
+	int? result = process::run({"c3fmt", "-i", "c3c.c3i"}, );
 	if(catch err = result) {
 		io::eprintfn("Failed to run c3fmt pass with error: %s", err);
 	} else if(result != 0) {
