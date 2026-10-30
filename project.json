@@ -1,9 +1,18 @@
 {
   "dependency-search-paths": [ "scripts/lib" ],
+  "sources": [ "src/**", "c3c.c3i" ],
   "test-sources": [ "test/**" ],
   "build-dir": "build",
   "output": "build",
   "targets": {
+    // Necessary for the tests to compile.
+    "dummy": {
+      "type": "executable",
+    },
+    "test-target": {
+      "type": "executable",
+      "sources-override": ["test/target.c3"]
+    },
     "bindgen": {
       "type": "executable",
       "dependencies": [ "bindgen" ],
