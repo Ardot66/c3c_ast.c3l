@@ -1,6 +1,5 @@
 module ardot::c3c::ast::internal @private;
 import std::os::posix, std::os::process, std::io, std::collections::fixedlist, libc;
-import c3c;
 
 alias SegmentList = FixedList{Segment, 32};
 struct InternalContext {

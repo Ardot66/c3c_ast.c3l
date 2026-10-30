@@ -1,4 +1,4 @@
-module c3c;
+module ardot::c3c::ast;
 
 
 struct StringSlice

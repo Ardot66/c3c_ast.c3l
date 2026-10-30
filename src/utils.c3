@@ -1,5 +1,4 @@
 module ardot::c3c::ast;
-import c3c;
 import std::io;
 
 struct VecHeader {
@@ -50,7 +49,7 @@ fn void* HTable.get(&self, void *key)
 }
 
 fn String SourceLoc.get_content(&self) {
-	c3c::File* file = context.global.loaded_sources[self.file_id];
+	File* file = context.global.loaded_sources[self.file_id];
 	return (String)file.contents[self.offset..self.offset + self.length];
 }
 

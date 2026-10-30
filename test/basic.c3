@@ -1,6 +1,5 @@
 module tests;
 import ardot::c3c;
-import c3c;
 import std::io;
 
 const String C3C_PATH = "c3cdev";

@@ -1,7 +1,6 @@
 module ardot::c3c::ast;
 import ardot::c3c::ast::internal @public;
 import std::os::process, std::os::posix;
-import c3c;
 
 struct AstSettings {
 	bitstruct : uint {

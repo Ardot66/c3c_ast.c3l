@@ -20,7 +20,7 @@ fn int main(String[] args)
 	BGTransFn ignore_fn = fn String(String name, Allocator alloc) => "";
 	bg::translate_header(header_path, {
 		.out_file = output,
-		.module_name = "c3c",
+		.module_name = "ardot::c3c::ast",
 		.include_file = fn bool(String name) {
 			const String[] INCLUDE = {
 				"enums.h",
