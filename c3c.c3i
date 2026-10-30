@@ -1,0 +1,5244 @@
+module c3c;
+
+
+struct StringSlice
+{
+	CChar* ptr;
+	usz len;
+}
+
+
+struct Version
+{
+	CInt major;
+	CInt minor;
+}
+
+
+struct DarwinSDK
+{
+	Version deploy_target;
+	Version min_deploy_target;
+}
+
+
+struct WindowsSDK
+{
+	CChar* windows_sdk_path;
+	CChar* vs_library_path;
+	CChar* cl_path;
+	CChar* cl_include_env;
+}
+
+
+struct ScratchBuf
+{
+	CChar[4194304] str;
+	CInt len;
+}
+
+alias UnnamedPFN1 @private = fn bool(void* arg);
+
+
+struct Task
+{
+	UnnamedPFN1 task;
+	void* arg;
+}
+
+
+struct VHeader
+{
+	CInt size;
+	CInt capacity;
+	CChar* data;
+}
+
+constdef DiagnosticsSeverity : CUInt
+{
+	DIAG_IGNORE = 0,
+	DIAG_WARN   = 1,
+	DIAG_ERROR  = 2
+}
+
+constdef SafetyLevel : CInt
+{
+	SAFETY_NOT_SET = -1,
+	SAFETY_OFF     =  0,
+	SAFETY_ON      =  1
+}
+
+constdef LinkerType : CInt
+{
+	LINKER_TYPE_NOT_SET = -1,
+	LINKER_TYPE_BUILTIN =  0,
+	LINKER_TYPE_CC      =  1,
+	LINKER_TYPE_CUSTOM  =  2
+}
+
+constdef LinuxLibc : CInt
+{
+	LINUX_LIBC_NOT_SET = -1,
+	LINUX_LIBC_GNU     =  0,
+	LINUX_LIBC_MUSL    =  1,
+	LINUX_LIBC_HOST    =  2
+}
+
+constdef TrustLevel : CUInt
+{
+	TRUST_NONE    = 0,
+	TRUST_INCLUDE = 1,
+	TRUST_FULL    = 2
+}
+
+constdef CompileOption : CUInt
+{
+	COMPILE_NORMAL               = 0,
+	COMPILE_LEX_ONLY             = 1,
+	COMPILE_LEX_PARSE_ONLY       = 2,
+	COMPILE_LEX_PARSE_CHECK_ONLY = 3,
+	COMPILE_OUTPUT_HEADERS       = 4,
+	COMPILE_OUTPUT_AST           = 5
+}
+
+constdef OptimizationSetting : CInt
+{
+	OPT_SETTING_NOT_SET = -1,
+	OPT_SETTING_O0      =  0,
+	OPT_SETTING_O1      =  1,
+	OPT_SETTING_O2      =  2,
+	OPT_SETTING_O3      =  3,
+	OPT_SETTING_O4      =  4,
+	OPT_SETTING_O5      =  5,
+	OPT_SETTING_OSMALL  =  6,
+	OPT_SETTING_OTINY   =  7
+}
+
+constdef OptimizationLevel : CInt
+{
+	OPTIMIZATION_NOT_SET    = -1,
+	OPTIMIZATION_NONE       =  0,
+	OPTIMIZATION_LESS       =  1,
+	OPTIMIZATION_MORE       =  2,
+	OPTIMIZATION_AGGRESSIVE =  3
+}
+
+constdef TestLogLevel : CInt
+{
+	TESTLOGLEVEL_NOT_SET  = -1,
+	TESTLOGLEVEL_VERBOSE  =  0,
+	TESTLOGLEVEL_DEBUG    =  1,
+	TESTLOGLEVEL_INFO     =  2,
+	TESTLOGLEVEL_WARN     =  3,
+	TESTLOGLEVEL_ERROR    =  4,
+	TESTLOGLEVEL_CRITICAL =  5
+}
+
+constdef PanicLevel : CInt
+{
+	PANIC_NOT_SET = -1,
+	PANIC_OFF     =  0,
+	PANIC_ON      =  1
+}
+
+constdef ValidationLevel : CInt
+{
+	VALIDATION_NOT_SET   = -1,
+	VALIDATION_LENIENT   =  0,
+	VALIDATION_STRICT    =  1,
+	VALIDATION_OBNOXIOUS =  2
+}
+
+constdef Ansi : CInt
+{
+	ANSI_DETECT = -1,
+	ANSI_OFF    =  0,
+	ANSI_ON     =  1
+}
+
+constdef SingleModule : CInt
+{
+	SINGLE_MODULE_NOT_SET = -1,
+	SINGLE_MODULE_OFF     =  0,
+	SINGLE_MODULE_ON      =  1
+}
+
+constdef UnrollLoops : CInt
+{
+	UNROLL_LOOPS_NOT_SET = -1,
+	UNROLL_LOOPS_OFF     =  0,
+	UNROLL_LOOPS_ON      =  1
+}
+
+constdef MergeFunctions : CInt
+{
+	MERGE_FUNCTIONS_NOT_SET = -1,
+	MERGE_FUNCTIONS_OFF     =  0,
+	MERGE_FUNCTIONS_ON      =  1
+}
+
+constdef SectionsSetting : CInt
+{
+	SECTIONS_SETTING_NOT_SET = -1,
+	SECTIONS_SETTING_OFF     =  0,
+	SECTIONS_SETTING_ON      =  1
+}
+
+constdef AutoVectorization : CInt
+{
+	VECTORIZATION_NOT_SET = -1,
+	VECTORIZATION_OFF     =  0,
+	VECTORIZATION_ON      =  1
+}
+
+constdef ImplicitFloat : CInt
+{
+	IMPLICIT_FLOAT_NOT_SET = -1,
+	IMPLICIT_FLOAT_OFF     =  0,
+	IMPLICIT_FLOAT_ON      =  1
+}
+
+constdef StripUnused : CInt
+{
+	STRIP_UNUSED_NOT_SET = -1,
+	STRIP_UNUSED_OFF     =  0,
+	STRIP_UNUSED_ON      =  1
+}
+
+constdef LinkLibc : CInt
+{
+	LINK_LIBC_NOT_SET = -1,
+	LINK_LIBC_OFF     =  0,
+	LINK_LIBC_ON      =  1
+}
+
+constdef EmitStdlib : CInt
+{
+	EMIT_STDLIB_NOT_SET = -1,
+	EMIT_STDLIB_OFF     =  0,
+	EMIT_STDLIB_ON      =  1
+}
+
+constdef UseStdlib : CInt
+{
+	USE_STDLIB_NOT_SET = -1,
+	USE_STDLIB_OFF     =  0,
+	USE_STDLIB_ON      =  1
+}
+
+constdef CustomLibc : CInt
+{
+	CUSTOM_LIBC_NOT_SET = -1,
+	CUSTOM_LIBC_OFF     =  0,
+	CUSTOM_LIBC_ON      =  1
+}
+
+constdef ShowBacktrace : CInt
+{
+	SHOW_BACKTRACE_NOT_SET = -1,
+	SHOW_BACKTRACE_OFF     =  0,
+	SHOW_BACKTRACE_ON      =  1
+}
+
+constdef SizeOptimizationLevel : CInt
+{
+	SIZE_OPTIMIZATION_NOT_SET = -1,
+	SIZE_OPTIMIZATION_NONE    =  0,
+	SIZE_OPTIMIZATION_SMALL   =  1,
+	SIZE_OPTIMIZATION_TINY    =  2
+}
+
+constdef SoftFloat : CInt
+{
+	SOFT_FLOAT_DEFAULT = -1,
+	SOFT_FLOAT_NONE    =  0,
+	SOFT_FLOAT_YES     =  1
+}
+
+constdef WinDebug : CInt
+{
+	WIN_DEBUG_DEFAULT  = -1,
+	WIN_DEBUG_CODEVIEW =  0,
+	WIN_DEBUG_DWARF    =  1
+}
+
+constdef Win64Simd : CInt
+{
+	WIN64_SIMD_DEFAULT = -1,
+	WIN64_SIMD_FULL    =  0,
+	WIN64_SIMD_ARRAY   =  1
+}
+
+constdef StructReturn : CInt
+{
+	STRUCT_RETURN_DEFAULT = -1,
+	STRUCT_RETURN_STACK   =  0,
+	STRUCT_RETURN_REG     =  1
+}
+
+constdef X86VectorCapability : CInt
+{
+	X86VECTOR_DEFAULT = -1,
+	X86VECTOR_NONE    =  0,
+	X86VECTOR_MMX     =  1,
+	X86VECTOR_SSE     =  2,
+	X86VECTOR_AVX     =  3,
+	X86VECTOR_AVX512  =  4,
+	X86VECTOR_CPU     =  5
+}
+
+constdef X86CpuSet : CInt
+{
+	X86CPU_DEFAULT  = -1,
+	X86CPU_BASELINE =  0,
+	X86CPU_SSSE3    =  1,
+	X86CPU_SSE4     =  2,
+	X86CPU_AVX1     =  3,
+	X86CPU_AVX2_V1  =  4,
+	X86CPU_AVX2_V2  =  5,
+	X86CPU_AVX512   =  6,
+	X86CPU_NATIVE   =  7
+}
+
+constdef RiscvCpuSet : CInt
+{
+	RISCV_CPU_DEFAULT = -1,
+	RISCV_CPU_RVI     =  0,
+	RISCV_CPU_RVIMAC  =  1,
+	RISCV_CPU_RVIMAFC =  2,
+	RISCV_CPU_RVGC    =  3,
+	RISCV_CPU_RVGCV   =  4
+}
+
+constdef FpOpt : CInt
+{
+	FP_DEFAULT = -1,
+	FP_STRICT  =  0,
+	FP_RELAXED =  1,
+	FP_FAST    =  2
+}
+
+constdef RiscvAbi : CInt
+{
+	RISCV_ABI_DEFAULT  = -1,
+	RISCV_ABI_INT_ONLY =  0,
+	RISCV_ABI_FLOAT    =  1,
+	RISCV_ABI_DOUBLE   =  2
+}
+
+constdef StackProbe : CInt
+{
+	STACK_PROBE_NOT_SET = -1,
+	STACK_PROBE_NONE    =  0,
+	STACK_PROBE_CALL    =  1,
+	STACK_PROBE_INLINE  =  2
+}
+
+constdef StackProtector : CInt
+{
+	STACK_PROTECTOR_NOT_SET = -1,
+	STACK_PROTECTOR_NONE    =  0,
+	STACK_PROTECTOR_BASIC   =  1,
+	STACK_PROTECTOR_STRONG  =  2,
+	STACK_PROTECTOR_ALL     =  3
+}
+
+constdef MemoryEnvironment : CInt
+{
+	MEMORY_ENV_NOT_SET = -1,
+	MEMORY_ENV_NORMAL  =  0,
+	MEMORY_ENV_SMALL   =  1,
+	MEMORY_ENV_TINY    =  2,
+	MEMORY_ENV_NONE    =  3
+}
+
+constdef WinCrtLinking : CInt
+{
+	WIN_CRT_DEFAULT       = -1,
+	WIN_CRT_NONE          =  0,
+	WIN_CRT_DYNAMIC       =  1,
+	WIN_CRT_DYNAMIC_DEBUG =  2,
+	WIN_CRT_STATIC        =  3,
+	WIN_CRT_STATIC_DEBUG  =  4
+}
+
+constdef WinSubsystem : CInt
+{
+	WIN_SUBSYSTEM_DEFAULT                 = -1,
+	WIN_SUBSYSTEM_CONSOLE                 =  0,
+	WIN_SUBSYSTEM_WINDOWS                 =  1,
+	WIN_SUBSYSTEM_NATIVE                  =  2,
+	WIN_SUBSYSTEM_POSIX                   =  3,
+	WIN_SUBSYSTEM_BOOT_APPLICATION        =  4,
+	WIN_SUBSYSTEM_EFI_APPLICATION         =  5,
+	WIN_SUBSYSTEM_EFI_BOOT_SERVICE_DRIVER =  6,
+	WIN_SUBSYSTEM_EFI_ROM                 =  7,
+	WIN_SUBSYSTEM_EFI_RUNTIME_DRIVER      =  8
+}
+
+constdef RelocModel : CInt
+{
+	RELOC_DEFAULT   = -1,
+	RELOC_NONE      =  0,
+	RELOC_SMALL_PIC =  1,
+	RELOC_BIG_PIC   =  2,
+	RELOC_SMALL_PIE =  3,
+	RELOC_BIG_PIE   =  4
+}
+
+constdef DebugInfo : CInt
+{
+	DEBUG_INFO_NOT_SET     = -1,
+	DEBUG_INFO_NONE        =  0,
+	DEBUG_INFO_LINE_TABLES =  1,
+	DEBUG_INFO_FULL        =  2
+}
+
+constdef ArchOsTarget : CInt
+{
+	ARCH_OS_TARGET_DEFAULT = -1,
+	ANDROID_AARCH64        =  0,
+	ANDROID_X86_64         =  1,
+	ELF_AARCH64            =  2,
+	ELF_RISCV32            =  3,
+	ELF_RISCV64            =  4,
+	ELF_X86                =  5,
+	ELF_X64                =  6,
+	ELF_XTENSA             =  7,
+	ELF_AVR                =  8,
+	FREEBSD_X86            =  9,
+	FREEBSD_X64            =  10,
+	IOS_AARCH64            =  11,
+	IOS_AARCH64_SIM        =  12,
+	IOS_X64_SIM            =  13,
+	LINUX_AARCH64          =  14,
+	LINUX_RISCV32          =  15,
+	LINUX_RISCV64          =  16,
+	LINUX_X86              =  17,
+	LINUX_X64              =  18,
+	MACOS_AARCH64          =  19,
+	MACOS_X64              =  20,
+	MCU_X86                =  21,
+	MINGW_X64              =  22,
+	NETBSD_AARCH64         =  23,
+	NETBSD_X86             =  24,
+	NETBSD_X64             =  25,
+	OPENBSD_X86            =  26,
+	OPENBSD_X64            =  27,
+	WASM32                 =  28,
+	WASM64                 =  29,
+	EMSCRIPTEN_WASM32      =  30,
+	WINDOWS_AARCH64        =  31,
+	WINDOWS_X64            =  32,
+	ARCH_OS_TARGET_LAST    =  32
+}
+
+constdef SanitizeMode : CInt
+{
+	SANITIZE_NOT_SET = -1,
+	SANITIZE_NONE    =  0,
+	SANITIZE_ADDRESS =  1,
+	SANITIZE_MEMORY  =  2,
+	SANITIZE_THREAD  =  3
+}
+
+constdef CompilerBackend : CUInt
+{
+	BACKEND_LLVM = 0,
+	BACKEND_TB   = 1,
+	BACKEND_C    = 2
+}
+
+constdef WarningLevel : CUInt
+{
+	WARNING_NOT_SET = 0,
+	WARNING_SILENT  = 1,
+	WARNING_WARN    = 2,
+	WARNING_ERROR   = 3
+}
+
+constdef Abi : CUInt
+{
+	ABI_UNKNOWN    = 0,
+	ABI_X64        = 1,
+	ABI_WIN64      = 2,
+	ABI_X86        = 3,
+	ABI_AARCH64    = 4,
+	ABI_WASM       = 5,
+	ABI_ARM        = 6,
+	ABI_PPC32      = 7,
+	ABI_PPC64_SVR4 = 8,
+	ABI_RISCV      = 9,
+	ABI_XTENSA     = 10,
+	ABI_AVR        = 11
+}
+
+constdef ABIKind : CUInt
+{
+	ABI_ARG_IGNORE                  = 0,
+	ABI_ARG_DIRECT                  = 1,
+	ABI_ARG_DIRECT_PAIR             = 2,
+	ABI_ARG_DIRECT_COERCE           = 3,
+	ABI_ARG_DIRECT_COERCE_INT       = 4,
+	ABI_ARG_DIRECT_SPLIT_STRUCT_I32 = 5,
+	ABI_ARG_EXPAND_COERCE           = 6,
+	ABI_ARG_INDIRECT                = 7,
+	ABI_ARG_EXPAND                  = 8
+}
+
+constdef AnalysisStage : CUInt
+{
+	ANALYSIS_NOT_BEGUN                               = 0,
+	ANALYSIS_MODULE_HIERARCHY                        = 1,
+	ANALYSIS_REMOVE_FEATURE_CONDITIONALS             = 2,
+	ANALYSIS_IMPORTS                                 = 3,
+	ANALYSIS_REGISTER_GLOBAL_DECLARATIONS            = 4,
+	ANALYSIS_INCLUDES                                = 5,
+	ANALYSIS_REGISTER_CONDITIONAL_DECLARATIONS       = 6,
+	ANALYSIS_METHODS_REGISTER                        = 7,
+	ANALYSIS_METHODS_REGISTER_GENERIC_SPECIALIZATION = 8,
+	ANALYSIS_POST_REGISTER                           = 9,
+	ANALYSIS_DECLS                                   = 10,
+	ANALYSIS_DECLS_CHECK_GENERICS                    = 11,
+	ANALYSIS_CT_ECHO                                 = 12,
+	ANALYSIS_CT_ASSERT                               = 13,
+	ANALYSIS_FUNCTIONS                               = 14,
+	ANALYSIS_INTERFACE                               = 15,
+	ANALYSIS_FINALIZE                                = 16,
+	ANALYSIS_LAST                                    = 16
+}
+
+constdef ArchType : CUInt
+{
+	ARCH_TYPE_UNKNOWN    = 0,
+	ARCH_TYPE_ARM        = 1,
+	ARCH_TYPE_ARMB       = 2,
+	ARCH_TYPE_AARCH64    = 3,
+	ARCH_TYPE_AARCH64_BE = 4,
+	ARCH_TYPE_AARCH64_32 = 5,
+	ARCH_TYPE_ARC        = 6,
+	ARCH_TYPE_AVR        = 7,
+	ARCH_TYPE_BPFEL      = 8,
+	ARCH_TYPE_BPFEB      = 9,
+	ARCH_TYPE_HEXAGON    = 10,
+	ARCH_TYPE_MIPS       = 11,
+	ARCH_TYPE_MIPSEL     = 12,
+	ARCH_TYPE_MIPS64     = 13,
+	ARCH_TYPE_MIPS64EL   = 14,
+	ARCH_TYPE_MSP430     = 15,
+	ARCH_TYPE_PPC        = 16,
+	ARCH_TYPE_PPC64      = 17,
+	ARCH_TYPE_PPC64LE    = 18,
+	ARCH_TYPE_R600       = 19,
+	ARCH_TYPE_AMDGCN     = 20,
+	ARCH_TYPE_RISCV32    = 21,
+	ARCH_TYPE_RISCV64    = 22,
+	ARCH_TYPE_SPARC      = 23,
+	ARCH_TYPE_SPARCV9    = 24,
+	ARCH_TYPE_SPARCEL    = 25,
+	ARCH_TYPE_SYSTEMZ    = 26,
+	ARCH_TYPE_TCE        = 27,
+	ARCH_TYPE_TCELE      = 28,
+	ARCH_TYPE_THUMB      = 29,
+	ARCH_TYPE_THUMBEB    = 30,
+	ARCH_TYPE_X86        = 31,
+	ARCH_TYPE_X86_64     = 32,
+	ARCH_TYPE_XCORE      = 33,
+	ARCH_TYPE_NVPTX      = 34,
+	ARCH_TYPE_NVPTX64    = 35,
+	ARCH_TYPE_LE32       = 36,
+	ARCH_TYPE_LE64       = 37,
+	ARCH_TYPE_AMDIL      = 38,
+	ARCH_TYPE_AMDIL64    = 39,
+	ARCH_TYPE_HSAIL      = 40,
+	ARCH_TYPE_HSAIL64    = 41,
+	ARCH_TYPE_SPIR       = 42,
+	ARCH_TYPE_SPIR64     = 43,
+	ARCH_TYPE_KALIMBA    = 44,
+	ARCH_TYPE_SHAVE      = 45,
+	ARCH_TYPE_LANAI      = 46,
+	ARCH_TYPE_WASM32     = 47,
+	ARCH_TYPE_WASM64     = 48,
+	ARCH_TYPE_RSCRIPT32  = 49,
+	ARCH_TYPE_RSCRIPT64  = 50,
+	ARCH_TYPE_XTENSA     = 51,
+	ARCH_TYPE_LAST       = 51
+}
+
+constdef ARMVariant : CUInt
+{
+	ARM_AAPCS       = 0,
+	ARM_AAPCS16     = 1,
+	ARM_APCS_GNU    = 2,
+	ARM_AAPCS_LINUX = 3
+}
+
+constdef ARMABIVariant : CUInt
+{
+	ARM_ABI_AAPCS       = 0,
+	ARM_ABI_APCS        = 1,
+	ARM_ABI_AAPCS16_VFP = 2,
+	ARM_ABI_AAPCS_VFP   = 3
+}
+
+constdef AsmArgBits : CUInt
+{
+	ARG_BITS_8   = 1,
+	ARG_BITS_16  = 2,
+	ARG_BITS_32  = 4,
+	ARG_BITS_64  = 8,
+	ARG_BITS_128 = 16,
+	ARG_BITS_256 = 32,
+	ARG_BITS_512 = 64,
+	ARG_BITS_80  = 128,
+	ARG_BITS_5   = 256,
+	ARG_BITS_12  = 512,
+	ARG_BITS_20  = 1024
+}
+
+constdef AsmArgKind : CUInt
+{
+	ASM_ARG_REG     = 0,
+	ASM_ARG_ADDR    = 1,
+	ASM_ARG_REGVAR  = 2,
+	ASM_ARG_MEMADDR = 3,
+	ASM_ARG_MEMVAR  = 4,
+	ASM_ARG_VALUE   = 5,
+	ASM_ARG_INT     = 6
+}
+
+constdef AsmOffsetType : CUInt
+{
+	ASM_SCALE_1    = 0,
+	ASM_SCALE_2    = 1,
+	ASM_SCALE_4    = 2,
+	ASM_SCALE_8    = 3,
+	ASM_SCALE_SHR  = 4,
+	ASM_SCALE_SHL  = 5,
+	ASM_SCALE_ASHL = 6,
+	ASM_SCALE_ROR  = 7,
+	ASM_SCALE_RRX  = 8
+}
+
+constdef AsmRegisterType : CUInt
+{
+	ASM_REG_INT   = 0,
+	ASM_REG_FLOAT = 1,
+	ASM_REG_IVEC  = 2,
+	ASM_REF_FVEC  = 3
+}
+
+constdef AstKind : CUInt
+{
+	AST_POISONED            = 0,
+	AST_ASM_BLOCK_STMT      = 1,
+	AST_ASM_LABEL           = 2,
+	AST_ASM_STMT            = 3,
+	AST_ASSERT_STMT         = 4,
+	AST_BLOCK_EXIT_STMT     = 5,
+	AST_BREAK_STMT          = 6,
+	AST_CASE_STMT           = 7,
+	AST_COMPOUND_STMT       = 8,
+	AST_CONTINUE_STMT       = 9,
+	AST_CT_ASSERT           = 10,
+	AST_CT_COMPOUND_STMT    = 11,
+	AST_CT_ECHO_STMT        = 12,
+	AST_CT_ELSE_STMT        = 13,
+	AST_CT_EXPAND_STMT      = 14,
+	AST_CT_FOREACH_STMT     = 15,
+	AST_CT_FOR_STMT         = 16,
+	AST_CT_IF_STMT          = 17,
+	AST_CT_SWITCH_STMT      = 18,
+	AST_CT_TYPE_ASSIGN_STMT = 19,
+	AST_DECLARE_STMT        = 20,
+	AST_DECLS_STMT          = 21,
+	AST_DEFAULT_STMT        = 22,
+	AST_DEFER_STMT          = 23,
+	AST_EXPR_STMT           = 24,
+	AST_FOREACH_STMT        = 25,
+	AST_FOR_STMT            = 26,
+	AST_IF_STMT             = 27,
+	AST_NEXTCASE_STMT       = 28,
+	AST_NOP_STMT            = 29,
+	AST_RETURN_STMT         = 30,
+	AST_SWITCH_STMT         = 31
+}
+
+constdef Atomicity : CUInt
+{
+	ATOMIC_NONE            = 0,
+	ATOMIC_UNORDERED       = 1,
+	ATOMIC_RELAXED         = 2,
+	ATOMIC_ACQUIRE         = 3,
+	ATOMIC_RELEASE         = 4,
+	ATOMIC_ACQUIRE_RELEASE = 5,
+	ATOMIC_SEQ_CONSISTENT  = 6
+}
+
+constdef AttributeDomain : CUInt
+{
+	ATTR_NONE             = 0,
+	ATTR_FUNC             = 1,
+	ATTR_GLOBAL           = 2,
+	ATTR_LOCAL            = 4,
+	ATTR_ENUM             = 8,
+	ATTR_STRUCT           = 16,
+	ATTR_UNION            = 32,
+	ATTR_CONST            = 64,
+	ATTR_FAULT            = 128,
+	ATTR_ALIAS            = 256,
+	ATTR_MEMBER           = 512,
+	ATTR_BITSTRUCT_MEMBER = 1024,
+	ATTR_INTERFACE        = 2048,
+	ATTR_CALL             = 4096,
+	ATTR_BITSTRUCT        = 8192,
+	ATTR_MACRO            = 16384,
+	ATTR_TYPEDEF          = 32768,
+	ATTR_ENUM_VALUE       = 65536,
+	ATTR_INTERFACE_METHOD = 131072,
+	ATTR_PARAM            = 262144,
+	ATTR_FNTYPE           = 524288,
+	ATTR_LOCAL_STATIC     = 1048576
+}
+
+constdef AttributeType : CUInt
+{
+	ATTRIBUTE_ALIGN            = 0,
+	ATTRIBUTE_ALLOW_DEPRECATED = 1,
+	ATTRIBUTE_ASMNAME          = 2,
+	ATTRIBUTE_BENCHMARK        = 3,
+	ATTRIBUTE_BIGENDIAN        = 4,
+	ATTRIBUTE_BUILTIN          = 5,
+	ATTRIBUTE_CALLCONV         = 6,
+	ATTRIBUTE_CNAME            = 7,
+	ATTRIBUTE_COMPACT          = 8,
+	ATTRIBUTE_CONST            = 9,
+	ATTRIBUTE_CONSTINIT        = 10,
+	ATTRIBUTE_DEPRECATED       = 11,
+	ATTRIBUTE_DYNAMIC          = 12,
+	ATTRIBUTE_EXPORT           = 13,
+	ATTRIBUTE_FEAT             = 14,
+	ATTRIBUTE_FINALIZER        = 15,
+	ATTRIBUTE_FORMAT           = 16,
+	ATTRIBUTE_IF               = 17,
+	ATTRIBUTE_INIT             = 18,
+	ATTRIBUTE_INLINE           = 19,
+	ATTRIBUTE_JUMP             = 20,
+	ATTRIBUTE_LINK             = 21,
+	ATTRIBUTE_LITTLEENDIAN     = 22,
+	ATTRIBUTE_LOCAL            = 23,
+	ATTRIBUTE_MAYDISCARD       = 24,
+	ATTRIBUTE_MUSTINIT         = 25,
+	ATTRIBUTE_NAKED            = 26,
+	ATTRIBUTE_NOALIAS          = 27,
+	ATTRIBUTE_NODISCARD        = 28,
+	ATTRIBUTE_NOINIT           = 29,
+	ATTRIBUTE_NOINLINE         = 30,
+	ATTRIBUTE_NOPADDING        = 31,
+	ATTRIBUTE_NORECURSE        = 32,
+	ATTRIBUTE_NOREDZONE        = 33,
+	ATTRIBUTE_NORETURN         = 34,
+	ATTRIBUTE_NOSANITIZE       = 35,
+	ATTRIBUTE_NOSTRIP          = 36,
+	ATTRIBUTE_OBFUSCATE        = 37,
+	ATTRIBUTE_OPERATOR         = 38,
+	ATTRIBUTE_OPERATOR_R       = 39,
+	ATTRIBUTE_OPERATOR_S       = 40,
+	ATTRIBUTE_OPTIONAL         = 41,
+	ATTRIBUTE_OVERLAP          = 42,
+	ATTRIBUTE_PACKED           = 43,
+	ATTRIBUTE_PRIVATE          = 44,
+	ATTRIBUTE_PUBLIC           = 45,
+	ATTRIBUTE_PURE             = 46,
+	ATTRIBUTE_REFLECT          = 47,
+	ATTRIBUTE_SAFEINFER        = 48,
+	ATTRIBUTE_SAFEMACRO        = 49,
+	ATTRIBUTE_SECTION          = 50,
+	ATTRIBUTE_SIMD             = 51,
+	ATTRIBUTE_TAG              = 52,
+	ATTRIBUTE_TEST             = 53,
+	ATTRIBUTE_UNUSED           = 54,
+	ATTRIBUTE_USED             = 55,
+	ATTRIBUTE_WASM             = 56,
+	ATTRIBUTE_WEAK             = 57,
+	ATTRIBUTE_WEAKLINK         = 58,
+	ATTRIBUTE_WINMAIN          = 59,
+	ATTRIBUTE_STACKPROBE       = 60,
+	ATTRIBUTE_NOSTACKPROBE     = 61,
+	ATTRIBUTE_STACKPROTECTOR   = 62,
+	ATTRIBUTE_NOSTACKPROTECTOR = 63,
+	ATTRIBUTE_NONE             = 64,
+	NUMBER_OF_ATTRIBUTES       = 64
+}
+
+constdef BinaryOp : CUInt
+{
+	BINARYOP_ERROR            = 0,
+	BINARYOP_MULT             = 1,
+	BINARYOP_SUB              = 2,
+	BINARYOP_ADD              = 3,
+	BINARYOP_DIV              = 4,
+	BINARYOP_MOD              = 5,
+	BINARYOP_SHR              = 6,
+	BINARYOP_SHL              = 7,
+	BINARYOP_BIT_OR           = 8,
+	BINARYOP_BIT_XOR          = 9,
+	BINARYOP_BIT_AND          = 10,
+	BINARYOP_AND              = 11,
+	BINARYOP_OR               = 12,
+	BINARYOP_ELSE             = 13,
+	BINARYOP_CT_AND           = 14,
+	BINARYOP_CT_OR            = 15,
+	BINARYOP_CT_CONCAT        = 16,
+	BINARYOP_CT_CONCAT_ASSIGN = 17,
+	BINARYOP_GT               = 18,
+	BINARYOP_GE               = 19,
+	BINARYOP_LT               = 20,
+	BINARYOP_LE               = 21,
+	BINARYOP_NE               = 22,
+	BINARYOP_EQ               = 23,
+	BINARYOP_VEC_GT           = 24,
+	BINARYOP_VEC_GE           = 25,
+	BINARYOP_VEC_LT           = 26,
+	BINARYOP_VEC_LE           = 27,
+	BINARYOP_VEC_NE           = 28,
+	BINARYOP_VEC_EQ           = 29,
+	BINARYOP_ASSIGN           = 30,
+	BINARYOP_ADD_ASSIGN       = 31,
+	BINARYOP_BIT_AND_ASSIGN   = 32,
+	BINARYOP_BIT_OR_ASSIGN    = 33,
+	BINARYOP_BIT_XOR_ASSIGN   = 34,
+	BINARYOP_DIV_ASSIGN       = 35,
+	BINARYOP_MOD_ASSIGN       = 36,
+	BINARYOP_MULT_ASSIGN      = 37,
+	BINARYOP_SHR_ASSIGN       = 38,
+	BINARYOP_SHL_ASSIGN       = 39,
+	BINARYOP_SUB_ASSIGN       = 40,
+	BINARYOP_LAST             = 40
+}
+
+constdef BitSizes : CUInt
+{
+	BIT1         = 0,
+	BITS8        = 1,
+	BITS16       = 2,
+	BITS32       = 3,
+	BITS64       = 4,
+	BITS128      = 5,
+	BITS256      = 6,
+	BITSIZES_LEN = 7
+}
+
+constdef BoolErr_ : CInt
+{
+	BOOL_ERR   = -1,
+	BOOL_FALSE =  0,
+	BOOL_TRUE  =  1
+}
+
+alias BoolErr = BoolErr_;
+
+constdef BuiltinAccessKind : CUInt
+{
+	ACCESS_TYPEOFANY      = 0,
+	ACCESS_TYPEOFANYFAULT = 1,
+	ACCESS_ENUMNAME       = 2,
+	ACCESS_FAULTNAME      = 3
+}
+
+constdef BuiltinDefine : CUInt
+{
+	BUILTIN_DEF_DATE            = 0,
+	BUILTIN_DEF_FILE            = 1,
+	BUILTIN_DEF_FILEPATH        = 2,
+	BUILTIN_DEF_FUNC            = 3,
+	BUILTIN_DEF_FUNCTION        = 4,
+	BUILTIN_DEF_LINE            = 5,
+	BUILTIN_DEF_LINE_RAW        = 6,
+	BUILTIN_DEF_MODULE          = 7,
+	BUILTIN_DEF_BENCHMARK_NAMES = 8,
+	BUILTIN_DEF_BENCHMARK_FNS   = 9,
+	BUILTIN_DEF_TEST_NAMES      = 10,
+	BUILTIN_DEF_TEST_FNS        = 11,
+	BUILTIN_DEF_TIME            = 12,
+	BUILTIN_DEF_NONE            = 13,
+	NUMBER_OF_BUILTIN_DEFINES   = 13
+}
+
+constdef BuiltinFunction : CUInt
+{
+	BUILTIN_ABS                     = 0,
+	BUILTIN_ACOS                    = 1,
+	BUILTIN_ASIN                    = 2,
+	BUILTIN_ATAN                    = 3,
+	BUILTIN_ANY_MAKE                = 4,
+	BUILTIN_ATOMIC_LOAD             = 5,
+	BUILTIN_ATOMIC_STORE            = 6,
+	BUILTIN_ATOMIC_FETCH_EXCHANGE   = 7,
+	BUILTIN_ATOMIC_FETCH_ADD        = 8,
+	BUILTIN_ATOMIC_FETCH_SUB        = 9,
+	BUILTIN_ATOMIC_FETCH_AND        = 10,
+	BUILTIN_ATOMIC_FETCH_NAND       = 11,
+	BUILTIN_ATOMIC_FETCH_OR         = 12,
+	BUILTIN_ATOMIC_FETCH_XOR        = 13,
+	BUILTIN_ATOMIC_FETCH_MAX        = 14,
+	BUILTIN_ATOMIC_FETCH_MIN        = 15,
+	BUILTIN_ATOMIC_FETCH_INC_WRAP   = 16,
+	BUILTIN_ATOMIC_FETCH_DEC_WRAP   = 17,
+	BUILTIN_BITREVERSE              = 18,
+	BUILTIN_BREAKPOINT              = 19,
+	BUILTIN_BSWAP                   = 20,
+	BUILTIN_CEIL                    = 21,
+	BUILTIN_COMPARE_EXCHANGE        = 22,
+	BUILTIN_COPYSIGN                = 23,
+	BUILTIN_COS                     = 24,
+	BUILTIN_COSH                    = 25,
+	BUILTIN_CTLZ                    = 26,
+	BUILTIN_CTTZ                    = 27,
+	BUILTIN_EXACT_ADD               = 28,
+	BUILTIN_EXACT_DIV               = 29,
+	BUILTIN_EXACT_MOD               = 30,
+	BUILTIN_EXACT_MUL               = 31,
+	BUILTIN_EXACT_NEG               = 32,
+	BUILTIN_EXACT_SUB               = 33,
+	BUILTIN_EXP                     = 34,
+	BUILTIN_EXP2                    = 35,
+	BUILTIN_EXP10                   = 36,
+	BUILTIN_EXPECT                  = 37,
+	BUILTIN_EXPECT_WITH_PROBABILITY = 38,
+	BUILTIN_FENCE                   = 39,
+	BUILTIN_FLOOR                   = 40,
+	BUILTIN_FMA                     = 41,
+	BUILTIN_FMULADD                 = 42,
+	BUILTIN_FRAMEADDRESS            = 43,
+	BUILTIN_FSHL                    = 44,
+	BUILTIN_FSHR                    = 45,
+	BUILTIN_GATHER                  = 46,
+	BUILTIN_GET_ROUNDING_MODE       = 47,
+	BUILTIN_INT_TO_MASK             = 48,
+	BUILTIN_LOG                     = 49,
+	BUILTIN_LOG2                    = 50,
+	BUILTIN_LOG10                   = 51,
+	BUILTIN_MATRIX_MUL              = 52,
+	BUILTIN_MATRIX_TRANSPOSE        = 53,
+	BUILTIN_MASK_TO_INT             = 54,
+	BUILTIN_MASKED_LOAD             = 55,
+	BUILTIN_MASKED_STORE            = 56,
+	BUILTIN_MAX                     = 57,
+	BUILTIN_MEMCOPY                 = 58,
+	BUILTIN_MEMCOPY_INLINE          = 59,
+	BUILTIN_MEMMOVE                 = 60,
+	BUILTIN_MEMSET                  = 61,
+	BUILTIN_MEMSET_INLINE           = 62,
+	BUILTIN_MIN                     = 63,
+	BUILTIN_NEARBYINT               = 64,
+	BUILTIN_OVERFLOW_ADD            = 65,
+	BUILTIN_OVERFLOW_MUL            = 66,
+	BUILTIN_OVERFLOW_SUB            = 67,
+	BUILTIN_POPCOUNT                = 68,
+	BUILTIN_POW                     = 69,
+	BUILTIN_POW_INT                 = 70,
+	BUILTIN_PREFETCH                = 71,
+	BUILTIN_REDUCE_ADD              = 72,
+	BUILTIN_REDUCE_AND              = 73,
+	BUILTIN_REDUCE_FADD             = 74,
+	BUILTIN_REDUCE_FMUL             = 75,
+	BUILTIN_REDUCE_MAX              = 76,
+	BUILTIN_REDUCE_MIN              = 77,
+	BUILTIN_REDUCE_MUL              = 78,
+	BUILTIN_REDUCE_OR               = 79,
+	BUILTIN_REDUCE_XOR              = 80,
+	BUILTIN_REVERSE                 = 81,
+	BUILTIN_RETURNADDRESS           = 82,
+	BUILTIN_RINT                    = 83,
+	BUILTIN_RND                     = 84,
+	BUILTIN_ROUND                   = 85,
+	BUILTIN_ROUNDEVEN               = 86,
+	BUILTIN_SAT_ADD                 = 87,
+	BUILTIN_SAT_SHL                 = 88,
+	BUILTIN_SAT_SUB                 = 89,
+	BUILTIN_SAT_MUL                 = 90,
+	BUILTIN_SCATTER                 = 91,
+	BUILTIN_SELECT                  = 92,
+	BUILTIN_SET_ROUNDING_MODE       = 93,
+	BUILTIN_SPRINTF                 = 94,
+	BUILTIN_STR_FIND                = 95,
+	BUILTIN_STR_HASH                = 96,
+	BUILTIN_STR_LOWER               = 97,
+	BUILTIN_STR_PASCALCASE          = 98,
+	BUILTIN_STR_REPLACE             = 99,
+	BUILTIN_STR_UPPER               = 100,
+	BUILTIN_STR_SNAKECASE           = 101,
+	BUILTIN_SWIZZLE                 = 102,
+	BUILTIN_SWIZZLE2                = 103,
+	BUILTIN_SIN                     = 104,
+	BUILTIN_SINH                    = 105,
+	BUILTIN_SQRT                    = 106,
+	BUILTIN_SYSCALL                 = 107,
+	BUILTIN_SYSCLOCK                = 108,
+	BUILTIN_TAN                     = 109,
+	BUILTIN_TANH                    = 110,
+	BUILTIN_TRAP                    = 111,
+	BUILTIN_TRUNC                   = 112,
+	BUILTIN_UNALIGNED_LOAD          = 113,
+	BUILTIN_UNALIGNED_STORE         = 114,
+	BUILTIN_UNREACHABLE             = 115,
+	BUILTIN_VECCOMPLT               = 116,
+	BUILTIN_VECCOMPLE               = 117,
+	BUILTIN_VECCOMPGT               = 118,
+	BUILTIN_VECCOMPGE               = 119,
+	BUILTIN_VECCOMPEQ               = 120,
+	BUILTIN_VECCOMPNE               = 121,
+	BUILTIN_VOLATILE_LOAD           = 122,
+	BUILTIN_VOLATILE_STORE          = 123,
+	BUILTIN_WASM_MEMORY_SIZE        = 124,
+	BUILTIN_WASM_MEMORY_GROW        = 125,
+	BUILTIN_WIDESTRING_16           = 126,
+	BUILTIN_WIDESTRING_32           = 127,
+	BUILTIN_NONE                    = 128,
+	NUMBER_OF_BUILTINS              = 128,
+	BUILTIN_LLRINT                  = 129,
+	BUILTIN_LLROUND                 = 130,
+	BUILTIN_LRINT                   = 131,
+	BUILTIN_LROUND                  = 132
+}
+
+constdef CallABI : CUInt
+{
+	CALL_C          = 0,
+	CALL_X64_VECTOR = 1,
+	CALL_AAPCS      = 2,
+	CALL_AAPCS_VFP  = 3
+}
+
+constdef CallEnvKind : CUInt
+{
+	CALL_ENV_GLOBAL_INIT     = 0,
+	CALL_ENV_FUNCTION        = 1,
+	CALL_ENV_FUNCTION_STATIC = 2,
+	CALL_ENV_ATTR            = 3
+}
+
+constdef CmpRes : CInt
+{
+	CMP_LT = -1,
+	CMP_EQ =  0,
+	CMP_GT =  1
+}
+
+constdef CondResult : CInt
+{
+	COND_MISSING = -1,
+	COND_TRUE    =  1,
+	COND_FALSE   =  0
+}
+
+constdef CondType : CUInt
+{
+	COND_TYPE_UNWRAP_BOOL    = 0,
+	COND_TYPE_EVALTYPE_VALUE = 1
+}
+
+constdef ConstInitType : CUInt
+{
+	CONST_INIT_ZERO        = 0,
+	CONST_INIT_STRUCT      = 1,
+	CONST_INIT_UNION       = 2,
+	CONST_INIT_VALUE       = 3,
+	CONST_INIT_ARRAY       = 4,
+	CONST_INIT_ARRAY_FULL  = 5,
+	CONST_INIT_ARRAY_VALUE = 6
+}
+
+constdef ConstKind : CUInt
+{
+	CONST_FLOAT        = 0,
+	CONST_INTEGER      = 1,
+	CONST_BOOL         = 2,
+	CONST_ENUM         = 3,
+	CONST_FAULT        = 4,
+	CONST_BYTES        = 5,
+	CONST_STRING       = 6,
+	CONST_POINTER      = 7,
+	CONST_TYPEID       = 8,
+	CONST_SLICE        = 9,
+	CONST_INITIALIZER  = 10,
+	CONST_UNTYPED_LIST = 11,
+	CONST_REF          = 12,
+	CONST_MEMBER       = 13,
+	CONST_REFLECTION   = 14
+}
+
+constdef ConvGroup : CInt
+{
+	CONV_NO           = -1,
+	CONV_VOID         =  0,
+	CONV_WILDCARD     =  1,
+	CONV_BOOL         =  2,
+	CONV_INT          =  3,
+	CONV_FLOAT        =  4,
+	CONV_POINTER      =  5,
+	CONV_SLICE        =  6,
+	CONV_VECTOR       =  7,
+	CONV_BITSTRUCT    =  8,
+	CONV_DISTINCT     =  9,
+	CONV_ARRAY        =  10,
+	CONV_STRUCT       =  11,
+	CONV_UNION        =  12,
+	CONV_ANY          =  13,
+	CONV_INTERFACE    =  14,
+	CONV_ENUM         =  15,
+	CONV_RAW_ENUM     =  16,
+	CONV_FUNC         =  17,
+	CONV_TYPEID       =  18,
+	CONV_ANYFAULT     =  19,
+	CONV_VOIDPTR      =  20,
+	CONV_VAPTR        =  21,
+	CONV_INFERRED     =  22,
+	CONV_UNTYPED_LIST =  23,
+	CONV_LAST         =  23
+}
+
+constdef CType : CUInt
+{
+	CTYPE_SHORT     = 0,
+	CTYPE_INT       = 1,
+	CTYPE_LONG      = 2,
+	CTYPE_LONG_LONG = 3
+}
+
+constdef DeclKind : CUInt
+{
+	DECL_POISONED         = 0,
+	DECL_ATTRIBUTE        = 1,
+	DECL_BITSTRUCT        = 2,
+	DECL_BODYPARAM        = 3,
+	DECL_CT_ASSERT        = 4,
+	DECL_CT_ECHO          = 5,
+	DECL_CT_EXEC          = 6,
+	DECL_CT_EXPAND        = 7,
+	DECL_CT_INCLUDE       = 8,
+	DECL_DECLARRAY        = 9,
+	DECL_CONTRACT         = 10,
+	DECL_ALIAS            = 11,
+	DECL_ALIAS_PATH       = 12,
+	DECL_TYPEDEF          = 13,
+	DECL_ENUM             = 14,
+	DECL_ENUM_CONSTANT    = 15,
+	DECL_ERASED           = 16,
+	DECL_FAULT            = 17,
+	DECL_FNTYPE           = 18,
+	DECL_FUNC             = 19,
+	DECL_GROUP            = 20,
+	DECL_GENERIC          = 21,
+	DECL_GENERIC_INSTANCE = 22,
+	DECL_IMPORT           = 23,
+	DECL_LABEL            = 24,
+	DECL_MACRO            = 25,
+	DECL_INTERFACE        = 26,
+	DECL_CONSTSET         = 27,
+	DECL_STRUCT           = 28,
+	DECL_TYPE_ALIAS       = 29,
+	DECL_UNION            = 30,
+	DECL_VAR              = 31,
+	DECL_LAST             = 31
+}
+
+constdef DefineType : CUInt
+{
+	DEFINE_IDENT_ALIAS   = 0,
+	DEFINE_IDENT_GENERIC = 1
+}
+
+constdef DesignatorType : CUInt
+{
+	DESIGNATOR_FIELD = 0,
+	DESIGNATOR_ARRAY = 1,
+	DESIGNATOR_RANGE = 2
+}
+
+constdef EnvironmentType : CUInt
+{
+	ENV_TYPE_UNKNOWN    = 0,
+	ENV_TYPE_GNU        = 1,
+	ENV_TYPE_GNUABIN32  = 2,
+	ENV_TYPE_GNUABI64   = 3,
+	ENV_TYPE_GNUEABI    = 4,
+	ENV_TYPE_GNUEABIHF  = 5,
+	ENV_TYPE_GNUX32     = 6,
+	ENV_TYPE_CODE16     = 7,
+	ENV_TYPE_EABI       = 8,
+	ENV_TYPE_EABIHF     = 9,
+	ENV_TYPE_ELFV1      = 10,
+	ENV_TYPE_ELFV2      = 11,
+	ENV_TYPE_ANDROID    = 12,
+	ENV_TYPE_MUSL       = 13,
+	ENV_TYPE_MUSLEABI   = 14,
+	ENV_TYPE_MUSLEABIHF = 15,
+	ENV_TYPE_MSVC       = 16,
+	ENV_TYPE_ITANIUM    = 17,
+	ENV_TYPE_CYGNUS     = 18,
+	ENV_TYPE_CORECLR    = 19,
+	ENV_TYPE_SIMULATOR  = 20,
+	ENV_TYPE_MACABI     = 21,
+	ENV_TYPE_LAST       = 21
+}
+
+constdef ExprKind : CUInt
+{
+	EXPR_ACCESS_RESOLVED             = 0,
+	EXPR_ACCESS_UNRESOLVED           = 1,
+	EXPR_ADDR_CONVERSION             = 2,
+	EXPR_ASM                         = 3,
+	EXPR_BENCHMARK_HOOK              = 4,
+	EXPR_BINARY                      = 5,
+	EXPR_BITACCESS                   = 6,
+	EXPR_BITASSIGN                   = 7,
+	EXPR_BUILTIN                     = 8,
+	EXPR_BUILTIN_ACCESS              = 9,
+	EXPR_CALL                        = 10,
+	EXPR_CAST                        = 11,
+	EXPR_CATCH                       = 12,
+	EXPR_CATCH_UNRESOLVED            = 13,
+	EXPR_COMPILER_CONST              = 14,
+	EXPR_COMPOUND_LITERAL            = 15,
+	EXPR_COND                        = 16,
+	EXPR_CONST                       = 17,
+	EXPR_CONTRACT                    = 18,
+	EXPR_CT_FEATURE                  = 19,
+	EXPR_CT_DEFINED                  = 20,
+	EXPR_CT_EVAL                     = 21,
+	EXPR_CT_IDENT                    = 22,
+	EXPR_CT_REFLECT                  = 23,
+	EXPR_CT_SUBSCRIPT                = 24,
+	EXPR_DECL                        = 25,
+	EXPR_DEFAULT_ARG                 = 26,
+	EXPR_DESIGNATED_INITIALIZER_LIST = 27,
+	EXPR_DESIGNATOR                  = 28,
+	EXPR_DISCARD                     = 29,
+	EXPR_EMBED                       = 30,
+	EXPR_ENUM_FROM_ORD               = 31,
+	EXPR_EXPRESSION_LIST             = 32,
+	EXPR_EXT_TRUNC                   = 33,
+	EXPR_FLOAT_TO_INT                = 34,
+	EXPR_FORCE_UNWRAP                = 35,
+	EXPR_GENERIC_IDENT               = 36,
+	EXPR_HASH_IDENT                  = 37,
+	EXPR_IDENTIFIER                  = 38,
+	EXPR_INITIALIZER_LIST            = 39,
+	EXPR_INT_TO_BOOL                 = 40,
+	EXPR_INT_TO_FLOAT                = 41,
+	EXPR_INT_TO_PTR                  = 42,
+	EXPR_IOTA_DECL                   = 43,
+	EXPR_LAMBDA                      = 44,
+	EXPR_LAST_FAULT                  = 45,
+	EXPR_LENGTHOF                    = 46,
+	EXPR_MACRO_BLOCK                 = 47,
+	EXPR_MACRO_BODY                  = 48,
+	EXPR_MACRO_BODY_EXPANSION        = 49,
+	EXPR_MAKE_ANY                    = 50,
+	EXPR_MAKE_SLICE                  = 51,
+	EXPR_MAYBE_DEREF                 = 52,
+	EXPR_MEMBER_GET                  = 53,
+	EXPR_MEMBER_SET                  = 54,
+	EXPR_NAMED_ARGUMENT              = 55,
+	EXPR_NAMED_EVAL_ARGUMENT         = 56,
+	EXPR_NOP                         = 57,
+	EXPR_OPERATOR_CHARS              = 58,
+	EXPR_OPTIONAL                    = 59,
+	EXPR_OTHER_CONTEXT               = 60,
+	EXPR_POINTER_OFFSET              = 61,
+	EXPR_POISONED                    = 62,
+	EXPR_POST_UNARY                  = 63,
+	EXPR_PTR_ACCESS                  = 64,
+	EXPR_PTR_TO_INT                  = 65,
+	EXPR_RECAST                      = 66,
+	EXPR_RETHROW                     = 67,
+	EXPR_RETVAL                      = 68,
+	EXPR_RVALUE                      = 69,
+	EXPR_SCALAR_TO_VECTOR            = 70,
+	EXPR_SLICE                       = 71,
+	EXPR_SLICE_ASSIGN                = 72,
+	EXPR_SLICE_COPY                  = 73,
+	EXPR_SLICE_LEN                   = 74,
+	EXPR_SLICE_TO_VEC_ARRAY          = 75,
+	EXPR_SPLAT                       = 76,
+	EXPR_STRINGIFY                   = 77,
+	EXPR_SUBSCRIPT                   = 78,
+	EXPR_SUBSCRIPT_ADDR              = 79,
+	EXPR_SUBSCRIPT_ASSIGN            = 80,
+	EXPR_SWIZZLE                     = 81,
+	EXPR_TERNARY                     = 82,
+	EXPR_TEST_HOOK                   = 83,
+	EXPR_TRY                         = 84,
+	EXPR_TRY_UNRESOLVED              = 85,
+	EXPR_TRY_UNWRAP_CHAIN            = 86,
+	EXPR_TWO                         = 87,
+	EXPR_TYPECALL                    = 88,
+	EXPR_TYPEID                      = 89,
+	EXPR_TYPEID_INFO                 = 90,
+	EXPR_TYPEINFO                    = 91,
+	EXPR_TYPE_PROPERTY               = 92,
+	EXPR_UNARY                       = 93,
+	EXPR_UNRESOLVED_IDENTIFIER       = 94,
+	EXPR_VAARG                       = 95,
+	EXPR_VACOUNT                     = 96,
+	EXPR_VASPLAT                     = 97,
+	EXPR_VECTOR_FROM_ARRAY           = 98,
+	EXPR_VECTOR_TO_ARRAY             = 99,
+	EXPR_LAST                        = 99
+}
+
+constdef FloatABI : CUInt
+{
+	FLOAT_ABI_NONE = 0,
+	FLOAT_ABI_SOFT = 1,
+	FLOAT_ABI_HARD = 2
+}
+
+constdef InOutModifier : CUInt
+{
+	INOUT_ANY   = 0,
+	INOUT_IN    = 1,
+	INOUT_OUT   = 2,
+	INOUT_INOUT = 3,
+	INOUT_INIT  = 4,
+	INOUT_OWN   = 5,
+	INOUT_DROP  = 6
+}
+
+constdef IntrospectType : CUInt
+{
+	INTROSPECT_TYPE_VOID         = 0,
+	INTROSPECT_TYPE_BOOL         = 1,
+	INTROSPECT_TYPE_SIGNED_INT   = 2,
+	INTROSPECT_TYPE_UNSIGNED_INT = 3,
+	INTROSPECT_TYPE_FLOAT        = 4,
+	INTROSPECT_TYPE_TYPEID       = 5,
+	INTROSPECT_TYPE_ANYFAULT     = 6,
+	INTROSPECT_TYPE_ANY          = 7,
+	INTROSPECT_TYPE_ENUM         = 8,
+	INTROSPECT_TYPE_CONSTSET     = 9,
+	INTROSPECT_TYPE_STRUCT       = 10,
+	INTROSPECT_TYPE_UNION        = 11,
+	INTROSPECT_TYPE_BITSTRUCT    = 12,
+	INTROSPECT_TYPE_FUNC         = 13,
+	INTROSPECT_TYPE_OPTIONAL     = 14,
+	INTROSPECT_TYPE_ARRAY        = 15,
+	INTROSPECT_TYPE_SLICE        = 16,
+	INTROSPECT_TYPE_VECTOR       = 17,
+	INTROSPECT_TYPE_DISTINCT     = 18,
+	INTROSPECT_TYPE_POINTER      = 19,
+	INTROSPECT_TYPE_INTERFACE    = 20,
+	INTROSPECT_TYPE_UNTYPEDLIST  = 21
+}
+
+constdef LexMode : CUInt
+{
+	LEX_NORMAL    = 0,
+	LEX_CONTRACTS = 1
+}
+
+constdef Linker : CUInt
+{
+	LINKER_LINK_EXE = 0,
+	LINKER_LD       = 1,
+	LINKER_LD64     = 2,
+	LINKER_WASM     = 3,
+	LINKER_CC       = 4,
+	LINKER_UNKNOWN  = 5
+}
+
+constdef MainType : CUInt
+{
+	MAIN_TYPE_ERROR   = 0,
+	MAIN_TYPE_RAW     = 1,
+	MAIN_TYPE_NO_ARGS = 2,
+	MAIN_TYPE_ARGS    = 3,
+	MAIN_TYPE_WIN     = 4
+}
+
+constdef MethodSearchType : CUInt
+{
+	METHOD_SEARCH_SUBMODULE_CURRENT = 0,
+	METHOD_SEARCH_IMPORTED          = 1,
+	METHOD_SEARCH_CURRENT           = 2,
+	METHOD_SEARCH_PRIVATE_IMPORTED  = 3
+}
+
+constdef ObjectFormatType : CUInt
+{
+	OBJ_FORMAT_UNSUPPORTED = 0,
+	OBJ_FORMAT_COFF        = 1,
+	OBJ_FORMAT_GOFF        = 2,
+	OBJ_FORMAT_ELF         = 3,
+	OBJ_FORMAT_MACHO       = 4,
+	OBJ_FORMAT_WASM        = 5,
+	OBJ_FORMAT_XCOFF       = 6,
+	OBJ_FORMAT_AOUT        = 7
+}
+
+constdef OverloadType : CUInt
+{
+	OVERLOAD_TYPE_LEFT      = 1,
+	OVERLOAD_TYPE_RIGHT     = 2,
+	OVERLOAD_TYPE_SYMMETRIC = 3
+}
+
+constdef OverloadMatch : CInt
+{
+	OVERLOAD_MATCH_ERROR                = -1,
+	OVERLOAD_MATCH_NONE                 =  0,
+	OVERLOAD_MATCH_EXACT                =  1,
+	OVERLOAD_MATCH_CONVERSION           =  2,
+	OVERLOAD_MATCH_WILDCARD             =  3,
+	OVERLOAD_MATCH_AMBIGUOUS_WILDCARD   =  4,
+	OVERLOAD_MATCH_AMBIGUOUS_CONVERSION =  5,
+	OVERLOAD_MATCH_AMBIGUOUS_EXACT      =  6,
+	OVERLOAD_MATCH_AMBIGUOUS_START      =  4
+}
+
+constdef OperatorOverload : CUInt
+{
+	OVERLOAD_NONE            = 0,
+	OVERLOAD_ELEMENT_AT      = 1,
+	OVERLOAD_ELEMENT_REF     = 2,
+	OVERLOAD_ELEMENT_SET     = 3,
+	OVERLOAD_LEN             = 4,
+	OVERLOAD_NEGATE          = 5,
+	OVERLOAD_UNARY_MINUS     = 6,
+	OVERLOAD_PLUS            = 7,
+	OVERLOAD_TYPED_START     = 7,
+	OVERLOAD_MINUS           = 8,
+	OVERLOAD_MULTIPLY        = 9,
+	OVERLOAD_DIVIDE          = 10,
+	OVERLOAD_REMINDER        = 11,
+	OVERLOAD_AND             = 12,
+	OVERLOAD_OR              = 13,
+	OVERLOAD_XOR             = 14,
+	OVERLOAD_SHL             = 15,
+	OVERLOAD_SHR             = 16,
+	OVERLOAD_EQUAL           = 17,
+	OVERLOAD_LESS_THAN       = 18,
+	OVERLOAD_PLUS_ASSIGN     = 19,
+	OVERLOAD_MINUS_ASSIGN    = 20,
+	OVERLOAD_MULTIPLY_ASSIGN = 21,
+	OVERLOAD_DIVIDE_ASSIGN   = 22,
+	OVERLOAD_REMINDER_ASSIGN = 23,
+	OVERLOAD_AND_ASSIGN      = 24,
+	OVERLOAD_OR_ASSIGN       = 25,
+	OVERLOAD_XOR_ASSIGN      = 26,
+	OVERLOAD_SHL_ASSIGN      = 27,
+	OVERLOAD_SHR_ASSIGN      = 28,
+	OVERLOADS_COUNT          = 28
+}
+
+constdef OsType : CUInt
+{
+	OS_TYPE_UNKNOWN    = 0,
+	OS_TYPE_NONE       = 1,
+	OS_TYPE_ANANAS     = 2,
+	OS_TYPE_CLOUD_ABI  = 3,
+	OS_TYPE_DRAGON_FLY = 4,
+	OS_TYPE_FREEBSD    = 5,
+	OS_TYPE_FUCHSIA    = 6,
+	OS_TYPE_IOS        = 7,
+	OS_TYPE_KFREEBSD   = 8,
+	OS_TYPE_LINUX      = 9,
+	OS_TYPE_PS3        = 10,
+	OS_TYPE_MACOSX     = 11,
+	OS_TYPE_NETBSD     = 12,
+	OS_TYPE_OPENBSD    = 13,
+	OS_TYPE_SOLARIS    = 14,
+	OS_TYPE_WIN32      = 15,
+	OS_TYPE_HAIKU      = 16,
+	OS_TYPE_MINIX      = 17,
+	OS_TYPE_RTEMS      = 18,
+	OS_TYPE_NACL       = 19,
+	OS_TYPE_CNK        = 20,
+	OS_TYPE_AIX        = 21,
+	OS_TYPE_CUDA       = 22,
+	OS_TYPE_NVOPENCL   = 23,
+	OS_TYPE_AMDHSA     = 24,
+	OS_TYPE_PS4        = 25,
+	OS_TYPE_ELFIAMCU   = 26,
+	OS_TYPE_TVOS       = 27,
+	OS_TYPE_WATCHOS    = 28,
+	OS_TYPE_MESA3D     = 29,
+	OS_TYPE_CONTIKI    = 30,
+	OS_TYPE_AMDPAL     = 31,
+	OS_TYPE_HERMITCORE = 32,
+	OS_TYPE_HURD       = 33,
+	OS_TYPE_WASI       = 34,
+	OS_TYPE_EMSCRIPTEN = 35,
+	OS_TYPE_ANDROID    = 36,
+	OS_TYPE_LAST       = 36
+}
+
+constdef Precedence : CUInt
+{
+	PREC_NONE           = 0,
+	PREC_ASSIGNMENT     = 1,
+	PREC_TERNARY        = 2,
+	PREC_OR             = 3,
+	PREC_AND            = 4,
+	PREC_RELATIONAL     = 5,
+	PREC_ADDITIVE       = 6,
+	PREC_ORELSE         = 7,
+	PREC_BIT            = 8,
+	PREC_SHIFT          = 9,
+	PREC_MULTIPLICATIVE = 10,
+	PREC_UNARY          = 11,
+	PREC_CALL           = 12,
+	PREC_PRIMARY        = 13
+}
+
+constdef PrintType : CUInt
+{
+	PRINT_TYPE_ERROR = 0,
+	PRINT_TYPE_NOTE  = 1,
+	PRINT_TYPE_WARN  = 2
+}
+
+constdef ResolveStatus : CUInt
+{
+	RESOLVE_NOT_DONE = 0,
+	RESOLVE_RUNNING  = 1,
+	RESOLVE_DONE     = 2
+}
+
+constdef ResolveTypeKind : CUInt
+{
+	RESOLVE_TYPE_DEFAULT           = 0,
+	RESOLVE_TYPE_ALLOW_INFER       = 1,
+	RESOLVE_TYPE_ALLOW_FLEXIBLE    = 2,
+	RESOLVE_TYPE_NO_CHECK_DISTINCT = 4,
+	RESOLVE_TYPE_MACRO_METHOD      = 5,
+	RESOLVE_TYPE_FUNC_METHOD       = 4
+}
+
+constdef ScopeFlags : CUInt
+{
+	SCOPE_NONE         = 0,
+	SCOPE_ENSURE       = 2,
+	SCOPE_ENSURE_MACRO = 4,
+	SCOPE_MACRO        = 16,
+	SCOPE_COND         = 32,
+	SCOPE_COMPARISON   = 64
+}
+
+constdef StorageType : CInt
+{
+	STORAGE_ERROR        = -1,
+	STORAGE_NORMAL       =  0,
+	STORAGE_VOID         =  1,
+	STORAGE_COMPILE_TIME =  2,
+	STORAGE_WILDCARD     =  3,
+	STORAGE_UNKNOWN      =  4
+}
+
+constdef TokenType : CUInt
+{
+	TOKEN_INVALID_TOKEN          = 0,
+	TOKEN_AMP                    = 1,
+	TOKEN_AT                     = 2,
+	TOKEN_BANG                   = 3,
+	TOKEN_BIT_NOT                = 4,
+	TOKEN_BIT_OR                 = 5,
+	TOKEN_BIT_XOR                = 6,
+	TOKEN_COLON                  = 7,
+	TOKEN_COMMA                  = 8,
+	TOKEN_EOS                    = 9,
+	TOKEN_EQ                     = 10,
+	TOKEN_GREATER                = 11,
+	TOKEN_DIV                    = 12,
+	TOKEN_DOLLAR                 = 13,
+	TOKEN_DOT                    = 14,
+	TOKEN_HASH                   = 15,
+	TOKEN_LESS                   = 16,
+	TOKEN_LBRACE                 = 17,
+	TOKEN_LBRACKET               = 18,
+	TOKEN_LPAREN                 = 19,
+	TOKEN_MINUS                  = 20,
+	TOKEN_MOD                    = 21,
+	TOKEN_PLUS                   = 22,
+	TOKEN_QUESTION               = 23,
+	TOKEN_RBRACE                 = 24,
+	TOKEN_RBRACKET               = 25,
+	TOKEN_RPAREN                 = 26,
+	TOKEN_STAR                   = 27,
+	TOKEN_UNDERSCORE             = 28,
+	TOKEN_AND                    = 29,
+	TOKEN_ARROW                  = 30,
+	TOKEN_BANGBANG               = 31,
+	TOKEN_BIT_AND_ASSIGN         = 32,
+	TOKEN_BIT_OR_ASSIGN          = 33,
+	TOKEN_BIT_XOR_ASSIGN         = 34,
+	TOKEN_DIV_ASSIGN             = 35,
+	TOKEN_DOTDOT                 = 36,
+	TOKEN_BUILTIN                = 37,
+	TOKEN_ELVIS                  = 38,
+	TOKEN_EQEQ                   = 39,
+	TOKEN_GREATER_EQ             = 40,
+	TOKEN_IMPLIES                = 41,
+	TOKEN_LESS_EQ                = 42,
+	TOKEN_LVEC                   = 43,
+	TOKEN_MINUS_ASSIGN           = 44,
+	TOKEN_MINUSMINUS             = 45,
+	TOKEN_MOD_ASSIGN             = 46,
+	TOKEN_MULT_ASSIGN            = 47,
+	TOKEN_NOT_EQUAL              = 48,
+	TOKEN_OR                     = 49,
+	TOKEN_PLUS_ASSIGN            = 50,
+	TOKEN_PLUSPLUS               = 51,
+	TOKEN_RVEC                   = 52,
+	TOKEN_QUESTQUEST             = 53,
+	TOKEN_SCOPE                  = 54,
+	TOKEN_SHL                    = 55,
+	TOKEN_SHR                    = 56,
+	TOKEN_ELLIPSIS               = 57,
+	TOKEN_SHL_ASSIGN             = 58,
+	TOKEN_SHR_ASSIGN             = 59,
+	TOKEN_CT_AND                 = 60,
+	TOKEN_CT_CONCAT              = 61,
+	TOKEN_CT_OR                  = 62,
+	TOKEN_CT_TERNARY             = 63,
+	TOKEN_CT_CONCAT_ASSIGN       = 64,
+	TOKEN_IDENT                  = 65,
+	TOKEN_CONST_IDENT            = 66,
+	TOKEN_TYPE_IDENT             = 67,
+	TOKEN_CT_IDENT               = 68,
+	TOKEN_CT_CONST_IDENT         = 69,
+	TOKEN_CT_TYPE_IDENT          = 70,
+	TOKEN_HASH_IDENT             = 71,
+	TOKEN_AT_IDENT               = 72,
+	TOKEN_AT_CONST_IDENT         = 73,
+	TOKEN_AT_TYPE_IDENT          = 74,
+	TOKEN_STRING                 = 75,
+	TOKEN_INTEGER                = 76,
+	TOKEN_CHAR_LITERAL           = 77,
+	TOKEN_REAL                   = 78,
+	TOKEN_BYTES                  = 79,
+	TOKEN_DOC_COMMENT            = 80,
+	TOKEN_VOID                   = 81,
+	TOKEN_FIRST_KEYWORD          = 81,
+	TOKEN_BOOL                   = 82,
+	TOKEN_CHAR                   = 83,
+	TOKEN_DOUBLE                 = 84,
+	TOKEN_FLOAT                  = 85,
+	TOKEN_FLOAT16                = 86,
+	TOKEN_BFLOAT                 = 87,
+	TOKEN_INT128                 = 88,
+	TOKEN_ICHAR                  = 89,
+	TOKEN_INT                    = 90,
+	TOKEN_IPTR                   = 91,
+	TOKEN_SZ                     = 92,
+	TOKEN_LONG                   = 93,
+	TOKEN_SHORT                  = 94,
+	TOKEN_UINT128                = 95,
+	TOKEN_UINT                   = 96,
+	TOKEN_ULONG                  = 97,
+	TOKEN_UPTR                   = 98,
+	TOKEN_USHORT                 = 99,
+	TOKEN_USZ                    = 100,
+	TOKEN_FLOAT128               = 101,
+	TOKEN_ANY                    = 102,
+	TOKEN_FAULT                  = 103,
+	TOKEN_TYPEID                 = 104,
+	TOKEN_UNTYPEDLIST            = 105,
+	TOKEN_ALIAS                  = 106,
+	TOKEN_FIRST_NON_TYPE_KEYWORD = 106,
+	TOKEN_ASSERT                 = 107,
+	TOKEN_ASM                    = 108,
+	TOKEN_ATTRDEF                = 109,
+	TOKEN_ATTRMACRO              = 110,
+	TOKEN_BITSTRUCT              = 111,
+	TOKEN_BREAK                  = 112,
+	TOKEN_CASE                   = 113,
+	TOKEN_CATCH                  = 114,
+	TOKEN_CONSTDEF               = 115,
+	TOKEN_CONST                  = 116,
+	TOKEN_CONSTSET               = 117,
+	TOKEN_CONTINUE               = 118,
+	TOKEN_DEFAULT                = 119,
+	TOKEN_DEFER                  = 120,
+	TOKEN_DO                     = 121,
+	TOKEN_ELSE                   = 122,
+	TOKEN_ENUM                   = 123,
+	TOKEN_EXTERN                 = 124,
+	TOKEN_FALSE                  = 125,
+	TOKEN_FAULTDEF               = 126,
+	TOKEN_FOR                    = 127,
+	TOKEN_FOREACH                = 128,
+	TOKEN_FOREACH_R              = 129,
+	TOKEN_FN                     = 130,
+	TOKEN_TLOCAL                 = 131,
+	TOKEN_IF                     = 132,
+	TOKEN_INLINE                 = 133,
+	TOKEN_IMPORT                 = 134,
+	TOKEN_LENGTHOF               = 135,
+	TOKEN_MACRO                  = 136,
+	TOKEN_MODULE                 = 137,
+	TOKEN_NEXTCASE               = 138,
+	TOKEN_NULL                   = 139,
+	TOKEN_INTERFACE              = 140,
+	TOKEN_RETURN                 = 141,
+	TOKEN_STATIC                 = 142,
+	TOKEN_STRUCT                 = 143,
+	TOKEN_SWITCH                 = 144,
+	TOKEN_TRUE                   = 145,
+	TOKEN_TRY                    = 146,
+	TOKEN_TYPEDEF                = 147,
+	TOKEN_UNION                  = 148,
+	TOKEN_VAR                    = 149,
+	TOKEN_WHILE                  = 150,
+	TOKEN_LAST_NON_CT_KEYWORD    = 150,
+	TOKEN_CT_ASSERT              = 151,
+	TOKEN_CT_CASE                = 152,
+	TOKEN_CT_DEFAULT             = 153,
+	TOKEN_CT_DEFINED             = 154,
+	TOKEN_CT_ECHO                = 155,
+	TOKEN_CT_ELSE                = 156,
+	TOKEN_CT_EMBED               = 157,
+	TOKEN_CT_ENDFOR              = 158,
+	TOKEN_CT_ENDFOREACH          = 159,
+	TOKEN_CT_ENDIF               = 160,
+	TOKEN_CT_ENDSWITCH           = 161,
+	TOKEN_CT_EVAL                = 162,
+	TOKEN_CT_ERROR               = 163,
+	TOKEN_CT_EXEC                = 164,
+	TOKEN_CT_EXPAND              = 165,
+	TOKEN_CT_FEAT                = 166,
+	TOKEN_CT_FEATURE             = 167,
+	TOKEN_CT_FOR                 = 168,
+	TOKEN_CT_FOREACH             = 169,
+	TOKEN_CT_IF                  = 170,
+	TOKEN_CT_INCLUDE             = 171,
+	TOKEN_CT_REFLECT             = 172,
+	TOKEN_CT_STRINGIFY           = 173,
+	TOKEN_CT_SWITCH              = 174,
+	TOKEN_CT_TYPEFROM            = 175,
+	TOKEN_CT_TYPEOF              = 176,
+	TOKEN_CT_VAARG               = 177,
+	TOKEN_LAST_KEYWORD           = 177,
+	TOKEN_DOCS_START             = 178,
+	TOKEN_DOCS_END               = 179,
+	TOKEN_DOCS_EOL               = 180,
+	TOKEN_EOF                    = 181,
+	TOKEN_LAST                   = 181
+}
+
+constdef TypeCmpResult : CInt
+{
+	TYPE_MISMATCH           =  0,
+	TYPE_SAME               =  1,
+	TYPE_SAME_INT_SIZE      =  2,
+	TYPE_ALIGNMENT_INCREASE =  3,
+	TYPE_ERROR              = -1
+}
+
+constdef TypeIdInfoKind : CUInt
+{
+	TYPEID_INFO_KIND     = 0,
+	TYPEID_INFO_PARENTOF = 1,
+	TYPEID_INFO_INNER    = 2,
+	TYPEID_INFO_LEN      = 3,
+	TYPEID_INFO_SIZEOF   = 4,
+	TYPEID_INFO_NAMES    = 5
+}
+
+constdef TypeInfoCompressedKind : CUInt
+{
+	TYPE_COMPRESSED_NONE   = 0,
+	TYPE_COMPRESSED_PTR    = 1,
+	TYPE_COMPRESSED_SUB    = 2,
+	TYPE_COMPRESSED_SUBPTR = 3,
+	TYPE_COMPRESSED_PTRPTR = 4,
+	TYPE_COMPRESSED_PTRSUB = 5,
+	TYPE_COMPRESSED_SUBSUB = 6
+}
+
+constdef TypeInfoKind : CUInt
+{
+	TYPE_INFO_POISON          = 0,
+	TYPE_INFO_IDENTIFIER      = 1,
+	TYPE_INFO_CT_IDENTIFIER   = 2,
+	TYPE_INFO_TYPEOF          = 3,
+	TYPE_INFO_TYPEFROM        = 4,
+	TYPE_INFO_ARRAY           = 5,
+	TYPE_INFO_VECTOR          = 6,
+	TYPE_INFO_INFERRED_ARRAY  = 7,
+	TYPE_INFO_INFERRED_VECTOR = 8,
+	TYPE_INFO_SLICE           = 9,
+	TYPE_INFO_POINTER         = 10,
+	TYPE_INFO_GENERIC         = 11
+}
+
+constdef TypeKind : CUInt
+{
+	TYPE_POISONED        = 0,
+	TYPE_VOID            = 1,
+	TYPE_BOOL            = 2,
+	TYPE_I8              = 3,
+	TYPE_INTEGER_FIRST   = 3,
+	TYPE_NUM_FIRST       = 3,
+	TYPE_INT_FIRST       = 3,
+	TYPE_I16             = 4,
+	TYPE_I32             = 5,
+	TYPE_I64             = 6,
+	TYPE_I128            = 7,
+	TYPE_INT_LAST        = 7,
+	TYPE_U8              = 8,
+	TYPE_UINT_FIRST      = 8,
+	TYPE_U16             = 9,
+	TYPE_U32             = 10,
+	TYPE_U64             = 11,
+	TYPE_U128            = 12,
+	TYPE_UINT_LAST       = 12,
+	TYPE_INTEGER_LAST    = 12,
+	TYPE_F16             = 13,
+	TYPE_FLOAT_FIRST     = 13,
+	TYPE_BF16            = 14,
+	TYPE_F32             = 15,
+	TYPE_F64             = 16,
+	TYPE_F128            = 17,
+	TYPE_FLOAT_LAST      = 17,
+	TYPE_NUM_LAST        = 17,
+	TYPE_ANY             = 18,
+	TYPE_INTERFACE       = 19,
+	TYPE_ANYFAULT        = 20,
+	TYPE_TYPEID          = 21,
+	TYPE_FUNC_PTR        = 22,
+	TYPE_POINTER         = 23,
+	TYPE_TYPEDEF         = 24,
+	TYPE_CONSTSET        = 25,
+	TYPE_ENUM            = 26,
+	TYPE_FUNC_RAW        = 27,
+	TYPE_STRUCT          = 28,
+	TYPE_UNION           = 29,
+	TYPE_BITSTRUCT       = 30,
+	TYPE_ALIAS           = 31,
+	TYPE_UNTYPEDLIST     = 32,
+	TYPE_SLICE           = 33,
+	TYPE_ARRAY           = 34,
+	TYPE_FIRST_ARRAYLIKE = 34,
+	TYPE_FLEXIBLE_ARRAY  = 35,
+	TYPE_INFERRED_ARRAY  = 36,
+	TYPE_VECTOR          = 37,
+	TYPE_SIMD_VECTOR     = 38,
+	TYPE_INFERRED_VECTOR = 39,
+	TYPE_LAST_ARRAYLIKE  = 39,
+	TYPE_OPTIONAL        = 40,
+	TYPE_WILDCARD        = 41,
+	TYPE_TYPEINFO        = 42,
+	TYPE_MEMBER          = 43,
+	TYPE_REFLECTION      = 44,
+	TYPE_LAST            = 44
+}
+
+constdef TypeProperty : CUInt
+{
+	TYPE_PROPERTY_ALIGNMENT     = 0,
+	TYPE_PROPERTY_FROM_ORDINAL  = 1,
+	TYPE_PROPERTY_GENERIC_ARGS  = 2,
+	TYPE_PROPERTY_GENERIC_QNAME = 3,
+	TYPE_PROPERTY_HAS_EQUALS    = 4,
+	TYPE_PROPERTY_IS_ORDERED    = 5,
+	TYPE_PROPERTY_IS_ANONYMOUS  = 6,
+	TYPE_PROPERTY_IS_NESTED     = 7,
+	TYPE_PROPERTY_IS_SUBSTRUCT  = 8,
+	TYPE_PROPERTY_IS_GENERIC    = 9,
+	TYPE_PROPERTY_LEN           = 10,
+	TYPE_PROPERTY_LOOKUP_FIELD  = 11,
+	TYPE_PROPERTY_MAX           = 12,
+	TYPE_PROPERTY_MIN           = 13,
+	TYPE_PROPERTY_MEMBERS       = 14,
+	TYPE_PROPERTY_METHODS       = 15,
+	TYPE_PROPERTY_NAN           = 16,
+	TYPE_PROPERTY_INF           = 17,
+	TYPE_PROPERTY_INNER         = 18,
+	TYPE_PROPERTY_KIND          = 19,
+	TYPE_PROPERTY_NAMES         = 20,
+	TYPE_PROPERTY_NAME          = 21,
+	TYPE_PROPERTY_CNAME         = 22,
+	TYPE_PROPERTY_QNAME         = 23,
+	TYPE_PROPERTY_PARAM_STRUCT  = 24,
+	TYPE_PROPERTY_PARAMS        = 25,
+	TYPE_PROPERTY_PARENT        = 26,
+	TYPE_PROPERTY_RETURNS       = 27,
+	TYPE_PROPERTY_SIZE          = 28,
+	TYPE_PROPERTY_GET_TAG       = 29,
+	TYPE_PROPERTY_HAS_TAG       = 30,
+	TYPE_PROPERTY_TAGS          = 31,
+	TYPE_PROPERTY_VALUES        = 32,
+	TYPE_PROPERTY_NONE          = 33,
+	NUMBER_OF_TYPE_PROPERTIES   = 33
+}
+
+constdef UnaryOp : CUInt
+{
+	UNARYOP_ERROR  = 0,
+	UNARYOP_DEREF  = 1,
+	UNARYOP_ADDR   = 2,
+	UNARYOP_NEG    = 3,
+	UNARYOP_PLUS   = 4,
+	UNARYOP_BITNEG = 5,
+	UNARYOP_NOT    = 6,
+	UNARYOP_INC    = 7,
+	UNARYOP_DEC    = 8,
+	UNARYOP_TADDR  = 9
+}
+
+constdef VarDeclKind : CUInt
+{
+	VARDECL_CONST         = 0,
+	VARDECL_GLOBAL        = 1,
+	VARDECL_LOCAL         = 2,
+	VARDECL_PARAM         = 3,
+	VARDECL_MEMBER        = 4,
+	VARDECL_BITMEMBER     = 5,
+	VARDECL_PARAM_EXPR    = 6,
+	VARDECL_UNWRAPPED     = 7,
+	VARDECL_ERASE         = 8,
+	VARDECL_REWRAPPED     = 9,
+	VARDECL_PARAM_CT      = 10,
+	VARDECL_PARAM_CT_TYPE = 11,
+	VARDECL_LOCAL_CT      = 12,
+	VARDECL_LOCAL_CT_TYPE = 13,
+	VARDECL_FIRST_CT      = 10,
+	VARDECL_LAST_CT       = 13
+}
+
+constdef Variadic : CUInt
+{
+	VARIADIC_NONE  = 0,
+	VARIADIC_TYPED = 1,
+	VARIADIC_ANY   = 2,
+	VARIADIC_RAW   = 3
+}
+
+constdef VendorType : CUInt
+{
+	VENDOR_UNKNOWN                  = 0,
+	VENDOR_APPLE                    = 1,
+	VENDOR_PC                       = 2,
+	VENDOR_SCEI                     = 3,
+	VENDOR_BGP                      = 4,
+	VENDOR_BGQ                      = 5,
+	VENDOR_FREESCALE                = 6,
+	VENDOR_IBM                      = 7,
+	VENDOR_IMAGINATION_TECHNOLOGIES = 8,
+	VENDOR_MIPS_TECHNOLOGIES        = 9,
+	VENDOR_NVIDIA                   = 10,
+	VENDOR_CSR                      = 11,
+	VENDOR_MYRIAD                   = 12,
+	VENDOR_AMD                      = 13,
+	VENDOR_MESA                     = 14,
+	VENDOR_SUSE                     = 15,
+	VENDOR_OPEN_EMBEDDED            = 16,
+	VENDOR_LAST                     = 16
+}
+
+constdef Visibility : CUInt
+{
+	VISIBLE_PUBLIC  = 0,
+	VISIBLE_PRIVATE = 1,
+	VISIBLE_LOCAL   = 2
+}
+
+constdef X86Feature : CUInt
+{
+	X86_FEAT_ADX                = 0,
+	X86_FEAT_AES                = 1,
+	X86_FEAT_AMX_AVX512         = 2,
+	X86_FEAT_AMX_FP8            = 3,
+	X86_FEAT_AMX_MOVRS          = 4,
+	X86_FEAT_AMX_TF32           = 5,
+	X86_FEAT_AMX_TRANSPOSE      = 6,
+	X86_FEAT_AMX_BF16           = 7,
+	X86_FEAT_AMX_COMPLEX        = 8,
+	X86_FEAT_AMX_FP16           = 9,
+	X86_FEAT_AMX_INT8           = 10,
+	X86_FEAT_AMX_TILE           = 11,
+	X86_FEAT_APX_EGPR           = 12,
+	X86_FEAT_APX_PUSH2POP2      = 13,
+	X86_FEAT_APX_PPX            = 14,
+	X86_FEAT_APX_NDD            = 15,
+	X86_FEAT_APX_CCMP           = 16,
+	X86_FEAT_APX_NF             = 17,
+	X86_FEAT_APX_CF             = 18,
+	X86_FEAT_APX_ZU             = 19,
+	X86_FEAT_AVX                = 20,
+	X86_FEAT_AVX10_1            = 21,
+	X86_FEAT_AVX10_2            = 22,
+	X86_FEAT_AVX10_1_512        = 23,
+	X86_FEAT_AVX10_1_256        = 24,
+	X86_FEAT_AVX10_2_512        = 25,
+	X86_FEAT_AVX10_2_256        = 26,
+	X86_FEAT_AVX2               = 27,
+	X86_FEAT_AVX5124FMAPS       = 28,
+	X86_FEAT_AVX5124VNNIW       = 29,
+	X86_FEAT_AVX512BF16         = 30,
+	X86_FEAT_AVX512BITALG       = 31,
+	X86_FEAT_AVX512BMM          = 32,
+	X86_FEAT_AVX512BW           = 33,
+	X86_FEAT_AVX512CD           = 34,
+	X86_FEAT_AVX512DQ           = 35,
+	X86_FEAT_AVX512ER           = 36,
+	X86_FEAT_AVX512F            = 37,
+	X86_FEAT_AVX512FP16         = 38,
+	X86_FEAT_AVX512IFMA         = 39,
+	X86_FEAT_AVX512PF           = 40,
+	X86_FEAT_AVX512VBMI         = 41,
+	X86_FEAT_AVX512VBMI2        = 42,
+	X86_FEAT_AVX512VL           = 43,
+	X86_FEAT_AVX512VNNI         = 44,
+	X86_FEAT_AVX512VP2INTERSECT = 45,
+	X86_FEAT_AVX512VPOPCNTDQ    = 46,
+	X86_FEAT_AVXIFMA            = 47,
+	X86_FEAT_AVXNECONVERT       = 48,
+	X86_FEAT_AVXVNNI            = 49,
+	X86_FEAT_AVXVNNIINT16       = 50,
+	X86_FEAT_AVXVNNIINT8        = 51,
+	X86_FEAT_BMI                = 52,
+	X86_FEAT_BMI2               = 53,
+	X86_FEAT_CLDEMOTE           = 54,
+	X86_FEAT_CLFLUSHOPT         = 55,
+	X86_FEAT_CLWB               = 56,
+	X86_FEAT_CLZERO             = 57,
+	X86_FEAT_CMOV               = 58,
+	X86_FEAT_CMPCCXADD          = 59,
+	X86_FEAT_CMPXCHG16B         = 60,
+	X86_FEAT_CMPXCHG8B          = 61,
+	X86_FEAT_CRC32              = 62,
+	X86_FEAT_ENQCMD             = 63,
+	X86_FEAT_EVEX512            = 64,
+	X86_FEAT_F16C               = 65,
+	X86_FEAT_FMA                = 66,
+	X86_FEAT_FMA4               = 67,
+	X86_FEAT_FSGSBASE           = 68,
+	X86_FEAT_FXSR               = 69,
+	X86_FEAT_GFNI               = 70,
+	X86_FEAT_HRESET             = 71,
+	X86_FEAT_INVPCID            = 72,
+	X86_FEAT_JMPABS             = 73,
+	X86_FEAT_KL                 = 74,
+	X86_FEAT_LWP                = 75,
+	X86_FEAT_LZCNT              = 76,
+	X86_FEAT_MMX                = 77,
+	X86_FEAT_MOVBE              = 78,
+	X86_FEAT_MOVDIR64B          = 79,
+	X86_FEAT_MOVDIRI            = 80,
+	X86_FEAT_MOVRS              = 81,
+	X86_FEAT_MWAITX             = 82,
+	X86_FEAT_PCLMUL             = 83,
+	X86_FEAT_PCONFIG            = 84,
+	X86_FEAT_PKU                = 85,
+	X86_FEAT_POPCNT             = 86,
+	X86_FEAT_PREFETCHI          = 87,
+	X86_FEAT_PREFETCHWT1        = 88,
+	X86_FEAT_PRFCHW             = 89,
+	X86_FEAT_PTWRITE            = 90,
+	X86_FEAT_RAOINT             = 91,
+	X86_FEAT_RDPID              = 92,
+	X86_FEAT_RDPRU              = 93,
+	X86_FEAT_RDRND              = 94,
+	X86_FEAT_RDSEED             = 95,
+	X86_FEAT_RTM                = 96,
+	X86_FEAT_SAHF               = 97,
+	X86_FEAT_SERIALIZE          = 98,
+	X86_FEAT_SOFT_FLOAT         = 99,
+	X86_FEAT_SGX                = 100,
+	X86_FEAT_SHA                = 101,
+	X86_FEAT_SHA512             = 102,
+	X86_FEAT_SHSTK              = 103,
+	X86_FEAT_SM3                = 104,
+	X86_FEAT_SM4                = 105,
+	X86_FEAT_SSE                = 106,
+	X86_FEAT_SSE2               = 107,
+	X86_FEAT_SSE3               = 108,
+	X86_FEAT_SSE4_1             = 109,
+	X86_FEAT_SSE4_2             = 110,
+	X86_FEAT_SSE4_A             = 111,
+	X86_FEAT_SSSE3              = 112,
+	X86_FEAT_TBM                = 113,
+	X86_FEAT_TSXLDTRK           = 114,
+	X86_FEAT_UINTR              = 115,
+	X86_FEAT_USERMSR            = 116,
+	X86_FEAT_VAES               = 117,
+	X86_FEAT_VPCLMULQDQ         = 118,
+	X86_FEAT_VZEROUPPER         = 119,
+	X86_FEAT_WAITPKG            = 120,
+	X86_FEAT_WBNOINVD           = 121,
+	X86_FEAT_WIDEKL             = 122,
+	X86_FEAT_X87                = 123,
+	X86_FEAT_XOP                = 124,
+	X86_FEAT_XSAVE              = 125,
+	X86_FEAT_XSAVEC             = 126,
+	X86_FEAT_XSAVEOPT           = 127,
+	X86_FEAT_XSAVES             = 128,
+	X86_FEATURE_LAST            = 128
+}
+
+constdef WasmFeature : CUInt
+{
+	WASM_FEAT_BULK_MEMORY            = 0,
+	WASM_FEAT_BULK_MEMORY_OPT        = 1,
+	WASM_FEAT_CALL_INDIRECT_OVERLONG = 2,
+	WASM_FEAT_MULTIVALUE             = 3,
+	WASM_FEAT_MUTABLE_GLOBALS        = 4,
+	WASM_FEAT_NONTRAPPING_FPTORINT   = 5,
+	WASM_FEAT_REFERENCE_TYPES        = 6,
+	WASM_FEAT_SIGN_EXT               = 7,
+	WASM_FEAT_ATOMICS                = 8,
+	WASM_FEATURE_LAST                = 8
+}
+
+constdef ArmFeature : CUInt
+{
+	ARM_FEAT_ARMV6KZ       = 0,
+	ARM_FEAT_DSP           = 1,
+	ARM_FEAT_FP64          = 2,
+	ARM_FEAT_STRICT_ALIGN  = 3,
+	ARM_FEAT_VFP2          = 4,
+	ARM_FEAT_VFP2SP        = 5,
+	ARM_FEAT_AES           = 6,
+	ARM_FEAT_D32           = 7,
+	ARM_FEAT_FP_ARMV8      = 8,
+	ARM_FEAT_FP_ARMV8D16   = 9,
+	ARM_FEAT_FP_ARMV8D16SP = 10,
+	ARM_FEAT_FP_ARMV8SP    = 11,
+	ARM_FEAT_FP_FP16       = 12,
+	ARM_FEAT_FP_FP16FML    = 13,
+	ARM_FEAT_FP_FULLFP16   = 14,
+	ARM_FEAT_NEON          = 15,
+	ARM_FEAT_SHA2          = 16,
+	ARM_FEAT_THUMB_MODE    = 17,
+	ARM_FEAT_VFP3          = 18,
+	ARM_FEAT_VFP3D16       = 19,
+	ARM_FEAT_VFP3D16SP     = 20,
+	ARM_FEAT_VFP3SP        = 21,
+	ARM_FEAT_VFP4          = 22,
+	ARM_FEAT_VFP4D16       = 23,
+	ARM_FEAT_VFP4D16SP     = 24,
+	ARM_FEAT_VFP4SP        = 25,
+	ARM_FEAT_LAST          = 25
+}
+
+constdef Aarch64Feature : CUInt
+{
+	AARCH64_FEAT_CRC      = 0,
+	AARCH64_FEAT_LSE      = 1,
+	AARCH64_FEAT_RDM      = 2,
+	AARCH64_FEAT_FP_ARMV8 = 3,
+	AARCH64_FEAT_NEON     = 4,
+	AARCH64_FEATURE_LAST  = 4
+}
+
+constdef RiscVFeature : CUInt
+{
+	RISCV_FEAT_64BIT    = 0,
+	RISCV_FEAT_32BIT    = 1,
+	RISCV_FEAT_A        = 2,
+	RISCV_FEAT_B        = 3,
+	RISCV_FEAT_C        = 4,
+	RISCV_FEAT_D        = 5,
+	RISCV_FEAT_E        = 6,
+	RISCV_FEAT_F        = 7,
+	RISCV_FEAT_I        = 8,
+	RISCV_FEAT_M        = 9,
+	RISCV_FEAT_RELAX    = 10,
+	RISCV_FEAT_V        = 11,
+	RISCV_FEAT_ZAAMO    = 12,
+	RISCV_FEAT_ZALRSC   = 13,
+	RISCV_FEAT_ZBA      = 14,
+	RISCV_FEAT_ZBB      = 15,
+	RISCV_FEAT_ZBS      = 16,
+	RISCV_FEAT_ZCA      = 17,
+	RISCV_FEAT_ZCD      = 18,
+	RISCV_FEAT_ZCF      = 19,
+	RISCV_FEAT_ZFA      = 20,
+	RISCV_FEAT_ZICSR    = 21,
+	RISCV_FEAT_ZIFENCEI = 22,
+	RISCV_FEAT_ZMMUL    = 23,
+	RISCV_FEATURE_LAST  = 23
+}
+
+constdef RetValType : CUInt
+{
+	RET_NORMAL         = 0,
+	RET_OPTIONAL_VOID  = 1,
+	RET_OPTIONAL_VALUE = 2
+}
+
+constdef ParamRewrite : CUInt
+{
+	PARAM_RW_NONE            = 0,
+	PARAM_RW_VEC_TO_ARRAY    = 1,
+	PARAM_RW_EXPAND_ELEMENTS = 2
+}
+
+constdef CtEvalKind : CUInt
+{
+	CT_EVAL_IDENTIFIER          = 0,
+	CT_EVAL_IMPLICIT_IDENTIFIER = 1
+}
+
+constdef CompilerCommand : CUInt
+{
+	COMMAND_MISSING           = 0,
+	COMMAND_COMPILE           = 1,
+	COMMAND_COMPILE_ONLY      = 2,
+	COMMAND_COMPILE_BENCHMARK = 3,
+	COMMAND_COMPILE_TEST      = 4,
+	COMMAND_INIT              = 5,
+	COMMAND_INIT_LIB          = 6,
+	COMMAND_BUILD             = 7,
+	COMMAND_COMPILE_RUN       = 8,
+	COMMAND_STATIC_LIB        = 9,
+	COMMAND_DYNAMIC_LIB       = 10,
+	COMMAND_SOURCE_LIB        = 11,
+	COMMAND_RUN               = 12,
+	COMMAND_CLEAN_RUN         = 13,
+	COMMAND_CLEAN             = 14,
+	COMMAND_VENDOR_FETCH      = 15,
+	COMMAND_FETCH             = 16,
+	COMMAND_FETCH_LIST        = 17,
+	COMMAND_FETCH_INFO        = 18,
+	COMMAND_DIST              = 19,
+	COMMAND_BENCHMARK         = 20,
+	COMMAND_TEST              = 21,
+	COMMAND_UNIT_TEST         = 22,
+	COMMAND_PRINT_SYNTAX      = 23,
+	COMMAND_PROJECT           = 24,
+	COMMAND_FETCH_SDK         = 25,
+	COMMAND_DOCGEN            = 26
+}
+
+constdef ProjectSubcommand : CUInt
+{
+	SUBCOMMAND_MISSING = 0,
+	SUBCOMMAND_VIEW    = 1,
+	SUBCOMMAND_ADD     = 2,
+	SUBCOMMAND_FETCH   = 3
+}
+
+constdef DiagnosticsType : CUInt
+{
+	DIAG_NONE                   = 0,
+	DIAG_WARNING_TYPE           = 1,
+	DIAG_UNUSED                 = 2,
+	DIAG_UNUSED_PARAMETER       = 3,
+	DIAG_UNUSED_FUNCTION        = 4,
+	DIAG_UNUSED_VARIABLE        = 5,
+	DIAG_UNUSED_IMPORT          = 6,
+	DIAG_UNUSED_MODULE          = 7,
+	DIAG_UNUSED_LABEL           = 8,
+	DIAG_UNUSED_PUBLIC          = 9,
+	DIAG_UNUSED_TYPE            = 10,
+	DIAG_CONVERSION             = 11,
+	DIAG_COVERED_SWITCH_DEFAULT = 12,
+	DIAG_ERROR_TYPE             = 13,
+	DIAG_DUPLICATE_ATTRIBUTE    = 14,
+	DIAG_NOT_IN_ENUM            = 15,
+	DIAG_MISSING_CASE           = 16,
+	DIAG_INT_TO_POINTER_CAST    = 17,
+	DIAG_END_SENTINEL           = 18
+}
+
+constdef TargetType : CUInt
+{
+	TARGET_TYPE_EXECUTABLE   = 0,
+	TARGET_TYPE_STATIC_LIB   = 1,
+	TARGET_TYPE_DYNAMIC_LIB  = 2,
+	TARGET_TYPE_OBJECT_FILES = 3,
+	TARGET_TYPE_BENCHMARK    = 4,
+	TARGET_TYPE_TEST         = 5,
+	TARGET_TYPE_PREPARE      = 6,
+	TARGET_TYPE_SOURCE_LIB   = 7
+}
+
+
+struct Warnings
+{
+	WarningLevel deprecation;
+	WarningLevel methods_not_resolved;
+	WarningLevel dead_code;
+	WarningLevel method_visibility;
+	WarningLevel builtin;
+	WarningLevel recursive_contracts;
+	WarningLevel unused_parameter;
+	WarningLevel unused_local;
+}
+
+constdef ProjectViewType : CUInt
+{
+	PROJECT_VIEW_TYPE_AUTHOR               = 0,
+	PROJECT_VIEW_TYPE_VERSION              = 1,
+	PROJECT_VIEW_TYPE_LANGUAGE_REVISION    = 2,
+	PROJECT_VIEW_TYPE_WARNINGS_USED        = 3,
+	PROJECT_VIEW_TYPE_C3L_LIB_SEARCH_PATHS = 4,
+	PROJECT_VIEW_TYPE_C3L_LIB_DEPENDENCIES = 5,
+	PROJECT_VIEW_TYPE_SOURCE_PATHS         = 6,
+	PROJECT_VIEW_TYPE_OUTPUT_LOCATION      = 7,
+	PROJECT_VIEW_TYPE_DEFAULT_OPTIMIZATION = 8,
+	PROJECT_VIEW_TYPE_TARGETS              = 9,
+	PROJECT_VIEW_TYPE_MAX                  = 9
+}
+
+
+struct BuildOptions
+{
+	CChar*[1024] lib_dir;
+	CInt lib_dir_count;
+	CChar*[1024] libs;
+	CInt lib_count;
+	CChar*[1024] linker_args;
+	CInt linker_arg_count;
+	CChar*[1024] linker_lib_dir;
+	CInt linker_lib_dir_count;
+	CChar*[1024] linker_libs;
+	CInt linker_lib_count;
+	CChar* std_lib_dir;
+	CChar* run_dir;
+
+	struct win
+	{
+		CChar* sdk;
+		CChar* def;
+		CChar* vs_dirs;
+		WinSubsystem subsystem;
+		WinCrtLinking crt_linking;
+	}
+
+	struct macos
+	{
+		CChar* sysroot;
+		CChar* min_version;
+		CChar* sdk_version;
+	}
+
+	struct ios
+	{
+		CChar* sysroot;
+		CChar* min_version;
+		CChar* sdk_version;
+		bool simulator;
+	}
+
+	struct linuxpaths
+	{
+		CChar* crt;
+		CChar* crtbegin;
+	}
+
+	struct android
+	{
+		CChar* ndk_path;
+		CInt api_version;
+	}
+	CChar* bsd_sysroot;
+	CInt build_threads;
+	CChar* echo_prefix;
+	CChar* search_name;
+	CChar* search_tag;
+	CChar* fetch_url;
+	CChar** vendor_libraries_to_fetch;
+	CChar** libraries_to_fetch;
+	CChar** files;
+	CChar* test_filter;
+	CChar** args;
+	CChar** dependency_args;
+	CChar** feature_names;
+	CChar** removed_feature_names;
+	CChar* output_name;
+	CChar* runner_output_name;
+	CChar* project_name;
+	CChar* target_select;
+	CChar* path;
+	CChar* vendor_download_path;
+	CChar* template;
+	CChar** unchecked_directories;
+	LinkerType linker_type;
+	ValidationLevel validation_level;
+	TestLogLevel test_log_level;
+	Ansi ansi;
+	bool test_breakpoint;
+	bool test_quiet;
+	bool test_nosort;
+	bool test_noleak;
+	bool test_show_output;
+	bool benchmark_csv_report;
+	bool print_large_functions;
+	CChar* custom_linker_path;
+	uint symtab_size;
+	CUInt version;
+	Warnings warnings;
+	CompilerBackend backend;
+	CompilerCommand command;
+
+	struct project_options
+	{
+		ProjectSubcommand command;
+		CChar* target_name;
+		TargetType target_type;
+		CChar** sources;
+
+		struct view_modifier
+		{
+			ushort flags_bitvector;
+			bool verbose;
+		}
+	}
+	CompileOption compile_option;
+	TrustLevel trust_level;
+	DiagnosticsSeverity[18] severity;
+	OptimizationSetting optsetting;
+	DebugInfo debug_info_override;
+	ShowBacktrace show_backtrace;
+	ArchOsTarget arch_os_target_override;
+	SafetyLevel safety_level;
+	PanicLevel panic_level;
+	SingleModule single_module;
+	UnrollLoops unroll_loops;
+	MergeFunctions merge_functions;
+	SectionsSetting function_sections;
+	SectionsSetting data_sections;
+	AutoVectorization loop_vectorization;
+	AutoVectorization slp_vectorization;
+	bool emit_llvm;
+	bool emit_asm;
+	bool benchmark_mode;
+	bool test_mode;
+	bool lsp_mode;
+	bool ast_dump_mode;
+	bool no_entry;
+	bool no_obj;
+	bool keep_object_files;
+	bool no_headers;
+	bool no_compress;
+	bool read_stdin;
+	bool print_output;
+	bool print_input;
+	bool run_once;
+	bool suppress_run;
+	bool no_deps;
+	bool docgen_json_out;
+	bool docgen_append;
+	bool fetch_accept_license;
+	bool fetch_compressed;
+	bool msvc_show_versions;
+	bool msvc_fetch_headers;
+	ImplicitFloat implicit_float;
+	CChar* msvc_version_override;
+	CChar* msvc_sdk_version_override;
+	CChar* fetch_sdk_target;
+	CChar* macos_sdk_version_override;
+	bool macos_list_sdks;
+	bool macos_fetch_sdk_list;
+	CChar** fetch_sdk_archs;
+	CInt verbosity_level;
+	CChar* panicfn;
+	CChar* benchfn;
+	CChar* testfn;
+	CChar* cc;
+	CChar* cflags;
+	CChar* build_dir;
+	CChar* output_dir;
+	CChar* llvm_out;
+	CChar* asm_out;
+	CChar* header_out;
+	CChar* obj_out;
+	CChar* exec_dir;
+	CChar* script_dir;
+	CChar** emit_only;
+	RelocModel reloc_model;
+	X86VectorCapability x86_vector_capability;
+	X86CpuSet x86_cpu_set;
+	RiscvCpuSet riscv_cpu_set;
+	Win64Simd win_64_simd;
+	WinDebug win_debug;
+	FpOpt fp_math;
+	EmitStdlib emit_stdlib;
+	UseStdlib use_stdlib;
+	CustomLibc custom_libc;
+	LinkLibc link_libc;
+	StripUnused strip_unused;
+	OptimizationLevel optlevel;
+	SizeOptimizationLevel optsize;
+	RiscvAbi riscv_abi;
+	LinuxLibc linux_libc;
+	MemoryEnvironment memory_environment;
+	SanitizeMode sanitize_mode;
+	StackProbe stack_probe;
+	StackProtector stack_protector;
+	uint stack_probe_size;
+	uint max_vector_size;
+	uint max_stack_object_size;
+	CChar* cpu_flags;
+	uint max_macro_iterations;
+	bool is_project;
+	bool print_keywords;
+	bool print_attributes;
+	bool print_builtins;
+	bool print_operators;
+	bool print_type_properties;
+	bool print_project_properties;
+	bool print_manifest_properties;
+	bool print_precedence;
+	bool print_linking;
+	bool print_env;
+	bool print_asm;
+	bool build_benchmark;
+	bool build_test;
+}
+
+
+struct AuthorEntry
+{
+	CChar* author;
+	CChar* email;
+}
+
+
+struct LibraryTarget
+{
+	Library_* parent;
+	ArchOsTarget arch_os;
+	CChar* cc;
+	CChar* cflags;
+	WinCrtLinking win_crt;
+	CChar** source_dirs;
+	CChar** csource_dirs;
+	CChar** csources;
+	CChar** cinclude_dirs;
+	CChar** execs;
+	CChar** link_flags;
+	CChar** linked_libs;
+	CChar** dependencies;
+}
+
+
+struct Library_
+{
+	CChar* dir;
+	CChar* provides;
+	CChar* linklib_dir;
+	CChar** dependencies;
+	CChar** execs;
+	CChar* cc;
+	CChar* cflags;
+	CChar** source_dirs;
+	CChar** csource_dirs;
+	CChar** cinclude_dirs;
+	WinCrtLinking win_crt;
+	LibraryTarget* target_used;
+	LibraryTarget** targets;
+}
+
+alias Library = Library_;
+
+
+struct BuildTarget
+{
+	TargetType type;
+	Library** library_list;
+	LibraryTarget** ccompiling_libraries;
+	CChar* name;
+	CChar* runner_output_name;
+	CChar* output_name;
+	CChar* extension;
+	CChar* version;
+	CChar* langrev;
+	CChar** source_dirs;
+	CChar** test_source_dirs;
+	CChar** sources;
+	CChar** object_files;
+	CChar** llvm_ir_files;
+	CChar** libdirs;
+	CChar** libs;
+	CChar** linker_libdirs;
+	CChar** linker_libs;
+	CChar* cpu;
+	CChar* echo_prefix;
+	CChar** link_args;
+	CChar* build_dir;
+	CChar* project_dir;
+	CChar* object_file_dir;
+	CChar* output_dir;
+	CChar* ir_file_dir;
+	CChar* asm_file_dir;
+	CChar* header_file_dir;
+	CChar* script_dir;
+	CChar* exec_dir;
+	CChar* run_dir;
+	CChar** emit_only;
+	bool is_non_project;
+	bool run_after_compile;
+	bool delete_after_run;
+	bool generate_benchmark_runner;
+	bool generate_test_runner;
+	bool benchmark_output;
+	bool test_output;
+	bool lsp_output;
+	bool ast_dump_output;
+	bool docgen;
+	bool docgen_json_out;
+	bool docgen_append;
+	bool output_headers;
+	bool no_compress;
+	bool output_ast;
+	bool lex_only;
+	bool parse_only;
+	bool check_only;
+	bool emit_llvm;
+	bool emit_asm;
+	bool emit_object_files;
+	bool keep_object_files;
+	bool build_benchmark;
+	bool build_test;
+	bool silent;
+	bool quiet;
+	bool read_stdin;
+	bool print_output;
+	bool print_input;
+	bool print_linking;
+	bool no_entry;
+	bool kernel_build;
+	bool print_stats;
+	bool single_threaded;
+	bool print_large_functions;
+	CInt build_threads;
+	TrustLevel trust_level;
+	OptimizationSetting optsetting;
+	OptimizationLevel optlevel;
+	MemoryEnvironment memory_environment;
+	SizeOptimizationLevel optsize;
+	SingleModule single_module;
+	ValidationLevel validation_level;
+	UseStdlib use_stdlib;
+	EmitStdlib emit_stdlib;
+	LinkLibc link_libc;
+	CustomLibc custom_libc;
+	ShowBacktrace show_backtrace;
+	StripUnused strip_unused;
+	DebugInfo debug_info;
+	SectionsSetting function_sections;
+	SectionsSetting data_sections;
+	MergeFunctions merge_functions;
+	UnrollLoops unroll_loops;
+	AutoVectorization loop_vectorization;
+	AutoVectorization slp_vectorization;
+	RelocModel reloc_model;
+	ArchOsTarget arch_os_target;
+	CompilerBackend backend;
+	LinkerType linker_type;
+	StackProbe stack_probe;
+	StackProtector stack_protector;
+	uint stack_probe_size;
+	CChar* cpu_flags;
+	int symtab_size;
+	int max_vector_size;
+	int max_stack_object_size;
+	int max_macro_iterations;
+	int switchrange_max_size;
+	int switchjump_max_size;
+	CChar** args;
+	CChar* panicfn;
+	CChar* benchfn;
+	CChar* testfn;
+	CChar* cc;
+	CChar* cflags;
+	CChar** csource_dirs;
+	CChar** csources;
+	CChar** cinclude_dirs;
+	CChar** exec;
+	CChar** env;
+	CChar* env_expand_error;
+	CChar** depends_on;
+	AuthorEntry* authors;
+	CChar** feature_list;
+	CChar* custom_linker_path;
+	Warnings warnings;
+
+	struct feature
+	{
+		WinDebug win_debug;
+		bitstruct : uint
+		{
+			SoftFloat soft_float : 0..2;
+			StructReturn x86_struct_return : 3..5;
+			X86VectorCapability x86_vector_capability : 6..9;
+			RiscvAbi riscv_abi : 10..13;
+			RiscvCpuSet riscv_cpu_set : 14..17;
+			Win64Simd pass_win64_simd_as_arrays : 18..20;
+			bool trap_on_wrap : 21..21;
+			bool sanitize_address : 22..22;
+			bool sanitize_memory : 23..23;
+			bool sanitize_thread : 24..24;
+			ImplicitFloat implicit_float : 25..27;
+		}
+		FpOpt fp_math;
+		SafetyLevel safe_mode;
+		PanicLevel panic_level;
+		X86CpuSet x86_cpu_set;
+	}
+
+	struct macos
+	{
+		CChar* sysroot;
+		CChar* min_version;
+		CChar* sdk_version;
+		DarwinSDK* sdk;
+	}
+
+	struct ios
+	{
+		CChar* sysroot;
+		CChar* min_version;
+		CChar* sdk_version;
+		DarwinSDK* sdk;
+		bool simulator;
+	}
+
+	struct win
+	{
+		CChar* sdk;
+		CChar* def;
+		CChar* vs_dirs;
+		WinSubsystem subsystem;
+		WinCrtLinking crt_linking;
+	}
+
+	struct linuxpaths
+	{
+		LinuxLibc libc;
+		CChar* crt;
+		CChar* crtbegin;
+	}
+
+	struct android
+	{
+		CChar* ndk_path;
+		CInt api_version;
+	}
+	CChar* bsd_sysroot;
+}
+
+
+struct AlignData
+{
+	CInt align;
+	CInt pref_align;
+}
+
+
+struct AsmArgType
+{
+	bitstruct : uint128
+	{
+		bool is_write : 0..0;
+		bool is_readwrite : 1..1;
+		bool is_address : 2..2;
+		AsmArgBits imm_arg_ubits : 3..18;
+		AsmArgBits imm_arg_ibits : 19..34;
+		AsmArgBits ireg_bits : 35..50;
+		AsmArgBits float_bits : 51..66;
+		AsmArgBits vec_bits : 67..82;
+	}
+}
+
+
+struct CpuFeatures
+{
+	CULongLong[2] bits;
+}
+
+
+struct Clobbers
+{
+	ulong[4] mask;
+}
+
+
+struct ClobberList
+{
+	CChar[1024] string;
+	CInt constraint_len;
+}
+
+
+struct AsmRegister
+{
+	CChar* name;
+	AsmRegisterType type;
+	AsmArgBits bits;
+	CInt clobber_index;
+}
+
+
+struct AsmInstruction
+{
+	CChar* name;
+	AsmArgType[6] param;
+	CInt param_count;
+	Clobbers mask;
+}
+
+
+struct PlatformTarget
+{
+	CChar* target_triple;
+	CChar* cpu;
+	CChar* features;
+	CChar* dylib_suffix;
+	Warnings warning;
+	ArchType arch;
+	OsType os;
+	VendorType vendor;
+	EnvironmentType environment_type;
+	ObjectFormatType object_format;
+	CInt alloca_address_space;
+	Abi abi;
+	AlignData[7] integers;
+	AlignData[7] floats;
+	AlignData[7] floats_pref;
+	RelocModel reloc_model;
+	bool use_dso_local;
+	bitstruct : ushort
+	{
+		bool pic_required : 0..0;
+		bool signed_c_char : 1..1;
+		FloatABI float_abi : 2..4;
+		CInt default_number_regs_x86 : 5..12;
+		bool use_comdat : 13..13;
+		bool noredzone : 14..14;
+	}
+	union
+	{
+		struct x86
+		{
+			bitstruct : char
+			{
+				bool return_small_struct_in_reg_abi : 0..0;
+				bool use_soft_float : 1..1;
+				bool is_mcu_api : 2..2;
+			}
+		}
+
+		struct x64
+		{
+			CpuFeatures features;
+			bitstruct : uint
+			{
+				CInt align_simd_default : 0..15;
+				bool win64_simd_as_array : 16..16;
+				bool soft_float : 17..17;
+				bool is_win64 : 18..18;
+				bool is_mingw64 : 19..19;
+				bool pass_int128_vector_in_mem : 20..20;
+			}
+			CInt native_vector_size_avx;
+		}
+
+		struct mips
+		{
+			bitstruct : char
+			{
+				bool is_32_bit : 0..0;
+			}
+		}
+
+		struct aarch64
+		{
+			bitstruct : char
+			{
+				bool is_aapcs : 0..0;
+				bool is_darwin_pcs : 1..1;
+			}
+		}
+
+		struct arm
+		{
+			bitstruct : char
+			{
+				bool is_win32 : 0..0;
+				ARMVariant variant : 1..3;
+				ARMABIVariant abi_variant : 4..6;
+			}
+		}
+
+		struct ppc
+		{
+			bitstruct : char
+			{
+				bool is_softfp : 0..0;
+			}
+		}
+
+		struct ppc64
+		{
+			bitstruct : char
+			{
+				bool is_softfp : 0..0;
+				bool is_elfv2 : 1..1;
+				bool has_qpx : 2..2;
+			}
+		}
+
+		struct riscv
+		{
+			CInt xlen;
+			CInt flen;
+		}
+
+		struct systemz
+		{
+			bitstruct : char
+			{
+				bool has_vector : 0..0;
+			}
+		}
+	}
+	bool big_endian;
+	bool emulated_tls;
+	bool tls_supported;
+	bool asm_supported;
+	bool float128_field;
+	bool float16_field;
+	bool vec128i;
+	bool vec64i;
+	bool vec128f;
+	bool vec64f;
+	bool int128_field;
+	AlignData align_pointer;
+	CInt align_max_vector;
+	CInt align_max_tls;
+	CInt align_large_array;
+	CInt width_pointer;
+	CInt width_register;
+	CInt width_c_short;
+	CInt width_c_int;
+	CInt width_c_long;
+	CInt width_c_long_long;
+	CInt width_c_long_double;
+	CInt width_c_wchar;
+	CInt width_c_wint;
+	CInt width_large_array_min;
+	CInt reg_param_max;
+	CInt sse_reg_param_max;
+	CInt builtin_ms_valist;
+	CInt aarch64sve_types;
+	CChar* platform_name;
+	bool asm_initialized;
+	CChar** clobber_name_list;
+	CChar* extra_clobbers;
+	AsmRegister[4096] registers;
+	AsmInstruction[4096] instructions;
+	CInt register_count;
+}
+
+alias Real = double;
+
+alias ByteSize = long;
+
+alias TypeSize = int;
+
+alias IndexDiff = int;
+
+alias ArrayIndex = int;
+
+alias StructIndex = short;
+
+alias AlignSize = int;
+
+alias BitSize = long;
+
+alias FileId = int;
+
+alias CanonicalType = Type;
+
+alias FlatType = Type;
+
+alias LoweredType = Type;
+
+alias AstId = CUInt;
+
+alias ExprId = CUInt;
+
+alias DeclId = CUInt;
+
+alias TypeInfoId = CUInt;
+
+alias SourceLocId = CUInt;
+
+
+struct Int128
+{
+	ulong high;
+	ulong low;
+}
+
+
+struct Int
+{
+	Int128 i;
+	TypeKind type;
+}
+
+
+struct Float
+{
+	Real f;
+	TypeKind type;
+}
+
+
+struct MethodTable
+{
+	uint count;
+	uint capacity;
+	uint max_load;
+	DeclId* methods;
+}
+
+
+struct DeclTable
+{
+	uint count;
+	uint capacity;
+	uint max_load;
+	DeclId* entries;
+}
+
+
+struct ConstInitializer
+{
+	ConstInitType kind;
+	Type* type;
+	union
+	{
+		ConstInitializer** init_struct;
+		Expr* init_value;
+
+		struct init_union
+		{
+			ConstInitializer* element;
+			ArrayIndex index;
+		}
+
+		struct init_array
+		{
+			ConstInitializer** elements;
+		}
+		ConstInitializer** init_array_full;
+
+		struct init_array_value
+		{
+			ConstInitializer* element;
+			ArrayIndex index;
+		}
+	}
+}
+
+
+struct SourceLoc
+{
+	FileId file_id;
+	ushort col;
+	uint offset;
+	uint length;
+	uint row;
+}
+
+
+struct InliningSpan
+{
+	SourceLocId loc;
+	InliningSpan* prev;
+	Decl* instance;
+}
+
+
+struct ExprConst
+{
+	bitstruct : ushort
+	{
+		ConstKind const_kind : 0..7;
+		bool is_character : 8..8;
+		bool is_hex : 9..9;
+	}
+	union
+	{
+		Float fxx;
+		Int ixx;
+		ulong ptr;
+		bool b;
+
+		struct bytes
+		{
+			CChar* ptr;
+			ArrayIndex len;
+		}
+		Expr* expr_ref;
+		Decl* global_ref;
+		Decl* enum_val;
+		Decl* fault_field;
+		Type* typeid_field;
+		ConstInitializer* initializer;
+		ConstInitializer* slice_init;
+		Expr** untyped_list;
+		Expr* reflection;
+
+		struct member
+		{
+			AlignSize offset;
+			AlignSize align;
+			Decl* decl;
+		}
+	}
+}
+
+
+struct File
+{
+	FileId file_id;
+	CChar* contents;
+	usz content_len;
+	CChar* name;
+	CChar* dir_path;
+	CChar* full_path;
+}
+
+
+struct SEntry
+{
+	CChar* key;
+	void* value;
+}
+
+
+struct STable
+{
+	uint count;
+	uint capacity;
+	uint max_load;
+	SEntry* entries;
+}
+
+
+struct HEntry
+{
+	void* key;
+	void* value;
+	HEntry* next;
+}
+
+alias HTEntry = HEntry;
+
+
+struct PathTableEntry
+{
+	CChar* short_path;
+	CChar* name;
+	Decl* value;
+	PathTableEntry* next;
+}
+
+
+struct HTable
+{
+	uint mask;
+	HTEntry** entries;
+}
+
+
+struct PathTable
+{
+	uint mask;
+	PathTableEntry** entries;
+}
+
+
+struct Path
+{
+	SourceLocId loc;
+	CChar* module_field;
+	uint len;
+}
+
+
+struct TypeBuiltin
+{
+	bitstruct : uint
+	{
+		CUShort bitsize : 0..7;
+		CUShort bytesize : 8..15;
+		CUShort abi_alignment : 16..23;
+		CUShort pref_alignment : 24..31;
+	}
+}
+
+
+struct TypeArray
+{
+	Type* base;
+	ArrayIndex len;
+}
+
+
+struct CalleeAttributes
+{
+	bitstruct : ushort
+	{
+		bool nodiscard : 0..0;
+		bool maydiscard : 1..1;
+		bool is_pure : 2..2;
+		bool noreturn : 3..3;
+		bool always_const : 4..4;
+		bool is_simd : 5..5;
+		char format : 6..13;
+	}
+}
+
+
+struct TypeFunction
+{
+	Decl* decl;
+	Signature* signature;
+	FunctionPrototype* prototype;
+}
+
+
+struct Type
+{
+	TypeKind type_kind;
+	bool is_live;
+	CanonicalType* canonical;
+	CChar* name;
+	Type** type_cache;
+	Type* func_ptr;
+	union
+	{
+		void* backend_type;
+
+		struct
+		{
+			ushort tb_set;
+			ushort tb_type;
+		}
+	}
+	TypeSize size;
+	void* backend_typeid;
+	void* backend_debug_type;
+	union
+	{
+		Decl* decl;
+		TypeBuiltin builtin;
+		TypeArray array;
+		TypeFunction function;
+		Type* pointer;
+		Type* optional;
+	}
+}
+
+
+struct TypeInfo
+{
+	SourceLocId loc;
+	bitstruct : ushort
+	{
+		ResolveStatus resolve_status : 0..2;
+		TypeInfoKind kind : 3..8;
+		bool optional : 9..9;
+		bool is_simd : 10..10;
+		TypeInfoCompressedKind subtype : 11..14;
+	}
+	Type* type;
+	union
+	{
+		struct unresolved
+		{
+			CChar* name;
+			Path* path;
+		}
+		Expr* unresolved_type_expr;
+
+		struct array
+		{
+			TypeInfo* base;
+			Expr* len;
+		}
+		TypeInfo* pointer;
+
+		struct generic
+		{
+			TypeInfo* base;
+			Expr** params;
+		}
+	}
+}
+
+
+struct Attr
+{
+	Path* path;
+	CChar* name;
+	SourceLocId loc;
+	bitstruct : ushort
+	{
+		AttributeType attr_kind : 0..7;
+		bool is_custom : 8..8;
+	}
+	Expr** exprs;
+}
+
+
+struct ResolvedAttrData
+{
+	Attr** tags;
+	CChar* deprecated;
+	CChar** links;
+	CChar* section;
+	CChar* wasm_module;
+	SourceLocId overload;
+}
+
+
+struct ImportDecl
+{
+	Path* path;
+	bool import_private_as_public;
+	bool is_non_recurse;
+	Module* module_field;
+}
+
+
+struct IncludeDecl
+{
+	Expr* filename;
+}
+
+
+struct ExecDecl
+{
+	Expr* filename;
+	Expr** args;
+	Expr* stdin_string;
+}
+
+
+struct StructDecl
+{
+	Decl** members;
+	DeclId parent;
+	union
+	{
+		struct
+		{
+			TypeSize size;
+			DeclId padded_decl_id;
+			StructIndex union_rep;
+			CUShort padding;
+			bitstruct : char
+			{
+				bool is_packed : 0..0;
+				bool is_compact : 1..1;
+			}
+		}
+
+		struct
+		{
+			TypeInfo* container_type;
+			bitstruct : char
+			{
+				bool msb0 : 0..0;
+				bool big_endian : 1..1;
+				bool little_endian : 2..2;
+				bool overlap : 3..3;
+				bool consecutive : 4..4;
+			}
+		}
+	}
+}
+
+
+struct VarDecl
+{
+	TypeInfoId type_info;
+	bitstruct : uint
+	{
+		VarDeclKind kind : 0..7;
+		bool shadow : 8..8;
+		bool vararg : 9..9;
+		bool is_static : 10..10;
+		bool is_read : 11..11;
+		bool not_null : 12..12;
+		bool out_param : 13..13;
+		bool in_param : 14..14;
+		bool own_param : 15..15;
+		bool drop_param : 16..16;
+		bool init_param : 17..17;
+		bool is_written : 18..18;
+		bool is_addr : 19..19;
+		bool self_addr : 20..20;
+		bool is_threadlocal : 21..21;
+		bool no_init : 22..22;
+		bool no_alias : 23..23;
+		bool bit_is_expr : 24..24;
+		bool is_self : 25..25;
+		bool is_temp : 26..26;
+		bool copy_const : 27..27;
+		bool defaulted : 28..28;
+		bool safe_infer : 29..29;
+	}
+	union
+	{
+		Expr* init_expr;
+		Decl* alias_field;
+	}
+	union
+	{
+		int index;
+
+		struct
+		{
+			void* backend_debug_ref;
+			union
+			{
+				void* optional_ref;
+				CInt optional_id;
+				CInt tb_optional_reg;
+			}
+		}
+
+		struct
+		{
+			union
+			{
+				struct
+				{
+					Expr* start;
+					Expr* end;
+				}
+
+				struct
+				{
+					CInt start_bit;
+					CInt end_bit;
+				}
+			}
+		}
+	}
+}
+
+
+struct EnumConstantDecl
+{
+	bool is_raw;
+	union
+	{
+		struct
+		{
+			Expr** associated;
+			CInt inner_ordinal;
+		}
+		Expr* value;
+	}
+}
+
+
+struct EnumDecl
+{
+	Decl** values;
+	Decl** parameters;
+	TypeInfo* type_info;
+}
+
+
+struct Signature
+{
+	CalleeAttributes attrs;
+	bitstruct : ushort
+	{
+		bool is_macro : 0..0;
+		bool is_at_macro : 1..1;
+		bool is_safemacro : 2..2;
+		Variadic variadic : 3..5;
+		CallABI abi : 6..13;
+	}
+	CInt vararg_index;
+	TypeInfoId rtype;
+	Decl** params;
+}
+
+
+struct FuncDecl
+{
+	TypeInfoId type_parent;
+	bitstruct : ushort
+	{
+		CUInt overload_type : 0..1;
+		CUInt is_wildcard_overload : 2..2;
+		OperatorOverload operator : 3..8;
+	}
+	Signature signature;
+	DeclId param_struct;
+	AstId body;
+	union
+	{
+		struct
+		{
+			bitstruct : uint
+			{
+				bool attr_inline : 0..0;
+				bool attr_noinline : 1..1;
+				bool attr_noredzone : 2..2;
+				bool attr_extname : 3..3;
+				bool attr_naked : 4..4;
+				bool attr_benchmark : 5..5;
+				bool attr_test : 6..6;
+				bool attr_winmain : 7..7;
+				bool attr_optional : 8..8;
+				bool attr_init : 9..9;
+				bool attr_finalizer : 10..10;
+				bool attr_interface_method : 11..11;
+				bool attr_dynamic : 12..12;
+				bool attr_nosanitize_address : 13..13;
+				bool attr_nosanitize_memory : 14..14;
+				bool attr_nosanitize_thread : 15..15;
+				bool is_lambda : 16..16;
+				bool in_macro : 17..17;
+				CUShort stack_probe : 18..20;
+				CUShort stack_protector : 21..23;
+			}
+			union
+			{
+				uint priority;
+				DeclId interface_method;
+				DeclId default_method;
+				Decl** generated_lambda;
+				Decl** lambda_ct_parameters;
+			}
+		}
+
+		struct
+		{
+			DeclId body_param;
+			CompilationUnit* unit;
+		}
+	}
+}
+
+
+struct FnTypeDecl
+{
+	Signature signature;
+	DeclId param_struct;
+}
+
+
+struct AttrDecl
+{
+	Decl** params;
+	Attr** attrs;
+}
+
+
+struct GenericDecl
+{
+	CChar** parameters;
+	CInt id;
+	Expr** requires;
+	Decl** instances;
+	Decl* owner;
+	Decl** decls;
+	Decl** conditional_decls;
+}
+
+
+struct GenericInstanceDecl
+{
+	CInt id;
+	Decl** templates;
+	Decl** params;
+	CChar* name_suffix;
+	CChar* cname_suffix;
+	Decl** generated_decls;
+}
+
+
+struct TypeAliasDecl
+{
+	bitstruct : char
+	{
+		bool is_func : 0..0;
+	}
+	union
+	{
+		Decl* decl;
+		Expr* type_expr;
+	}
+}
+
+
+struct DefineDecl
+{
+	union
+	{
+		Expr* alias_expr;
+		Decl* alias_field;
+	}
+}
+
+
+struct ContractParam
+{
+	CChar* name;
+	SourceLocId loc;
+	bitstruct : char
+	{
+		InOutModifier modifier : 0..3;
+		bool by_ref : 4..4;
+	}
+	CChar* description;
+}
+
+
+struct ExprContract
+{
+	union param
+	{
+		CChar* name;
+
+		struct
+		{
+			CInt index;
+			bool found;
+		}
+	}
+	Expr* decl_exprs;
+	CChar* comment;
+	CChar* expr_string;
+}
+
+
+struct ContractsDecl
+{
+	Expr** requires;
+	Expr** ensures;
+	ContractParam* params;
+	bool pure;
+	union
+	{
+		Expr** opt_returns;
+		Decl** opt_returns_resolved;
+	}
+	CChar* comment;
+	CChar* return_desc;
+}
+
+
+struct ModuleAliasDecl
+{
+	Path* alias_path;
+	Module* module_field;
+}
+
+
+struct LabelDecl
+{
+	AstId defer_field;
+	bitstruct : char
+	{
+		bool next_target : 0..0;
+	}
+	union
+	{
+		void* break_target;
+		CInt tb_break_target;
+	}
+	void* continue_target;
+	AstId scope_defer;
+	AstId parent;
+}
+
+
+struct Methods
+{
+	DeclId[29] overloads;
+	DeclTable method_table;
+	Decl** methods;
+}
+
+
+struct Decl
+{
+	CChar* name;
+	CChar* extname;
+	bitstruct : ulong
+	{
+		DeclKind decl_kind : 0..6;
+		ResolveStatus resolve_status : 7..9;
+		Visibility visibility : 10..12;
+		bool has_tag : 13..13;
+		bool is_extern : 14..14;
+		bool is_substruct : 15..15;
+		bool has_variable_array : 16..16;
+		bool is_value : 17..17;
+		bool is_autoimport : 18..18;
+		bool has_extname : 19..19;
+		bool is_external_visible : 20..20;
+		bool is_weak : 21..21;
+		bool is_weak_link : 22..22;
+		bool is_maybe_unused : 23..23;
+		bool is_must_use : 24..24;
+		bool will_reflect : 25..25;
+		bool obfuscate : 26..26;
+		bool is_dynamic : 27..27;
+		bool is_synthetic : 28..28;
+		bool is_export : 29..29;
+		bool is_live : 30..30;
+		bool no_strip : 31..31;
+		bool is_cond : 32..32;
+		bool is_feat_cond : 33..33;
+		bool is_if : 34..34;
+		bool is_body_checked : 35..35;
+		bool attr_nopadding : 36..36;
+		bool resolved_attributes : 37..37;
+		bool allow_deprecated : 38..38;
+		bool attr_constinit : 39..39;
+		bool attr_mustinit : 40..40;
+		bool is_template : 41..41;
+		bool is_templated : 42..42;
+		bool is_method_checked : 43..43;
+		bool is_used : 44..44;
+	}
+	union
+	{
+		void* backend_ref;
+		CInt backend_id;
+		CInt tb_register;
+		void* backend_value;
+		void* tb_symbol;
+		Decl* replacement;
+
+		struct
+		{
+			bool in_init;
+		}
+	}
+	SourceLocId loc;
+	TypeSize offset;
+	TypeSize padding;
+	AlignSize alignment;
+	union
+	{
+		DeclId generic_id;
+		DeclId instance_id;
+	}
+	DeclId docs;
+	CompilationUnit* unit;
+	union
+	{
+		Attr** attributes;
+		ResolvedAttrData* attrs_resolved;
+	}
+	Type* type;
+	union
+	{
+		Decl** decl_list;
+
+		struct
+		{
+			TypeInfo** interfaces;
+			Methods* method_table;
+			union
+			{
+				EnumDecl enums;
+
+				struct
+				{
+					TypeInfo* distinct;
+					Expr* distinct_align;
+				}
+				StructDecl strukt;
+				Decl** interface_methods;
+			}
+		}
+		AttrDecl attr_decl;
+		Decl** body_params;
+		Ast* ct_assert_decl;
+		Ast* ct_echo_decl;
+		Decl** ct_else_decl;
+		Decl** decls;
+		ContractsDecl contracts_decl;
+		DefineDecl define_decl;
+		ModuleAliasDecl module_alias_decl;
+		EnumConstantDecl enum_constant;
+		ExecDecl exec_decl;
+		Expr* expand_decl;
+		FnTypeDecl fntype_decl;
+		FuncDecl func_decl;
+		ImportDecl import_field;
+		IncludeDecl include;
+		LabelDecl label;
+		TypeAliasDecl type_alias_decl;
+		VarDecl var_field;
+		GenericDecl generic_decl;
+		GenericInstanceDecl instance_decl;
+	}
+}
+
+constdef RangeType : CUInt
+{
+	RANGE_DYNAMIC        = 0,
+	RANGE_CONST_END      = 1,
+	RANGE_CONST_LEN      = 2,
+	RANGE_CONST_RANGE    = 3,
+	RANGE_SINGLE_ELEMENT = 4
+}
+
+
+struct Range
+{
+	bitstruct : ushort
+	{
+		ResolveStatus status : 0..2;
+		RangeType range_type : 3..6;
+		bool start_from_end : 7..7;
+		bool end_from_end : 8..8;
+		bool is_len : 9..9;
+		bool is_optional : 10..10;
+	}
+	union
+	{
+		struct
+		{
+			ExprId start;
+			union
+			{
+				ExprId end;
+				ArrayIndex const_end;
+			}
+		}
+
+		struct
+		{
+			ArrayIndex start_index;
+			ArrayIndex len_index;
+		}
+	}
+}
+
+
+struct ExprTernary
+{
+	ExprId cond;
+	ExprId then_expr;
+	ExprId else_expr;
+	bitstruct : char
+	{
+		bool grouped : 0..0;
+		bool is_const : 1..1;
+	}
+}
+
+
+struct ExprBinary
+{
+	ExprId left;
+	ExprId right;
+	bitstruct : ushort
+	{
+		BinaryOp operator : 0..7;
+		bool grouped : 8..8;
+	}
+}
+
+
+struct ExprUnary
+{
+	Expr* expr;
+	bitstruct : ushort
+	{
+		UnaryOp operator : 0..7;
+		bool no_wrap : 8..8;
+		bool no_read : 9..9;
+	}
+}
+
+
+struct ExprCall
+{
+	union
+	{
+		ExprId function;
+		DeclId func_ref;
+	}
+	union
+	{
+		ExprId macro_body;
+		AstId function_contracts;
+	}
+	bitstruct : ushort
+	{
+		bool is_type_method : 0..0;
+		bool is_pointer_call : 1..1;
+		bool attr_force_inline : 2..2;
+		bool attr_force_noinline : 3..3;
+		bool is_builtin : 4..4;
+		bool is_func_ref : 5..5;
+		bool attr_pure : 6..6;
+		bool no_return : 7..7;
+		bool is_dynamic_dispatch : 8..8;
+		bool has_optional_arg : 9..9;
+		bool must_use : 10..10;
+		bool is_optional_return : 11..11;
+		bool va_is_splat : 12..12;
+		bool is_outer_call : 13..13;
+	}
+	Expr** arguments;
+	union
+	{
+		Expr** varargs;
+		Expr* vasplat;
+	}
+}
+
+
+struct ExprMacroBody
+{
+	Ast* body;
+	Decl** body_arguments;
+}
+
+
+struct SubscriptIndex
+{
+	bitstruct : char
+	{
+		bool start_from_end : 0..0;
+	}
+	ExprId expr;
+}
+
+
+struct ExprSubscript
+{
+	ExprId expr;
+	SubscriptIndex index;
+	bool no_check;
+	bool ref;
+	bool prefer_ref;
+}
+
+
+struct ExprCtSubscript
+{
+	Decl* var_field;
+	ArrayIndex index;
+}
+
+
+struct ExprSlice
+{
+	ExprId expr;
+	Range range;
+}
+
+
+struct ExprSubscriptAssign
+{
+	ExprId expr;
+	DeclId method;
+	ExprId index;
+}
+
+
+struct ExprSliceAssign
+{
+	ExprId left;
+	ExprId right;
+}
+
+
+struct ExprPointerOffset
+{
+	ExprId ptr;
+	ExprId offset;
+}
+
+
+struct ExprBuiltinAccess
+{
+	bitstruct : char
+	{
+		BuiltinAccessKind kind : 0..7;
+	}
+	ExprId inner;
+}
+
+
+struct ExprEmbedExpr
+{
+	Expr* filename;
+	Expr* len;
+}
+
+
+struct ExprGenericIdent
+{
+	ExprId parent;
+	Expr** parameters;
+}
+
+
+struct ExprResolvedAccess
+{
+	Expr* parent;
+	Decl* ref;
+}
+
+
+struct ExprTypeProperty
+{
+	Expr* type;
+	SourceLocId token_span;
+	CChar* property;
+}
+
+
+struct ExprUnresolvedAccess
+{
+	Expr* parent;
+	Expr* child;
+	bool is_lvalue;
+	bool is_ref;
+}
+
+
+struct DesignatorElement
+{
+	bitstruct : char
+	{
+		DesignatorType kind : 0..3;
+	}
+	union
+	{
+		Expr* field_expr;
+
+		struct
+		{
+			Expr* index_expr;
+			Expr* index_end_expr;
+		}
+	}
+	ArrayIndex index;
+	ArrayIndex index_end;
+}
+
+
+struct ExprDesignator
+{
+	DesignatorElement** path;
+	Expr* value;
+}
+
+
+struct ExprNamedArgument
+{
+	CChar* name;
+	SourceLocId name_span;
+	Expr* value;
+}
+
+
+struct ExprEvalNamedArgument
+{
+	Expr* name;
+	Expr* value;
+}
+
+
+struct ExprTypeCall
+{
+	Decl* type;
+	TypeProperty property;
+}
+
+
+struct ExprUnresolvedIdentifier
+{
+	Path* path;
+	CChar* ident;
+	bool is_const;
+}
+
+
+struct ExprDefaultArg
+{
+	SourceLocId loc;
+	Expr* inner;
+}
+
+
+struct ExprIdentifierRaw
+{
+	CChar* identifier;
+	bitstruct : char
+	{
+		bool is_ref : 0..0;
+		bool is_rvalue : 1..1;
+	}
+}
+
+
+struct ExprCtCall
+{
+	TokenType token_type;
+	union
+	{
+		struct
+		{
+			Expr* main_var;
+			DesignatorElement** flat_path;
+		}
+
+		struct
+		{
+			TypeInfoId type_from;
+			TypeInfoId type_to;
+		}
+	}
+}
+
+
+struct ExprAsmArg
+{
+	bitstruct : uint
+	{
+		AsmArgKind kind : 0..7;
+		CUShort index : 8..23;
+		AsmOffsetType offset_type : 24..29;
+		bool neg_offset : 30..30;
+		bool resolved : 31..31;
+	}
+	union
+	{
+		struct ident
+		{
+			union
+			{
+				CChar* name;
+				Decl* ident_decl;
+			}
+			bitstruct : char
+			{
+				bool copy_output : 0..0;
+				bool early_clobber : 1..1;
+				bool is_input : 2..2;
+			}
+		}
+		ExprId expr_id;
+
+		struct
+		{
+			ExprId base;
+			ExprId idx;
+			long offset;
+		}
+
+		struct
+		{
+			ulong value;
+			CInt bits;
+			bool is_neg;
+		}
+		union reg
+		{
+			CChar* name;
+			AsmRegister* ref;
+		}
+	}
+}
+
+
+struct ExprCtArg
+{
+	bitstruct : ushort
+	{
+		TokenType type : 0..15;
+	}
+	ExprId arg;
+}
+
+
+struct ExprCtAndOr
+{
+	bool is_and;
+	Expr** args;
+}
+
+
+struct ExprCast
+{
+	ExprId expr;
+	TypeInfoId type_info;
+}
+
+
+struct ExprTwo
+{
+	Expr* first;
+	Expr* last;
+}
+
+
+struct ExprBodyExpansion
+{
+	Expr** values;
+	Decl** declarations;
+	AstId first_stmt;
+}
+
+
+struct BlockExit
+{
+	void* block_return_exit;
+	void* block_optional_exit;
+	void* block_error_var;
+	void* block_return_out;
+}
+
+
+struct ExprMacroBlock
+{
+	AstId first_stmt;
+	bitstruct : char
+	{
+		bool is_noreturn : 0..0;
+		bool is_must_use : 1..1;
+		bool is_optional_return : 2..2;
+		bool had_optional_arg : 3..3;
+	}
+	Decl** params;
+	Decl* macro_field;
+	BlockExit** block_exit;
+}
+
+
+struct ExprCompoundLiteral
+{
+	Expr* initializer;
+	TypeInfo* type_info;
+}
+
+
+struct Label
+{
+	CChar* name;
+	SourceLocId loc;
+}
+
+
+struct ExprGuard
+{
+	Expr* inner;
+	AstId cleanup;
+	BlockExit** in_block;
+}
+
+
+struct ExprCatch
+{
+	Decl* decl;
+	Expr** exprs;
+}
+
+
+struct ExprUnresolvedCatch
+{
+	Expr* variable;
+	TypeInfo* type;
+	Expr** exprs;
+}
+
+
+struct ExprUnresolvedTry
+{
+	Expr* variable;
+	TypeInfo* type;
+	Expr* init;
+}
+
+
+struct ExprTry
+{
+	bitstruct : char
+	{
+		bool assign_existing : 0..0;
+	}
+	Expr* optional;
+	union
+	{
+		Decl* decl;
+		Expr* lhs;
+	}
+}
+
+
+struct ExprBuiltin
+{
+	CChar* ident;
+	BuiltinFunction builtin;
+}
+
+
+struct ExprTypeidInfo
+{
+	ExprId parent;
+	TypeIdInfoKind kind;
+}
+
+
+struct ExprSwizzle
+{
+	ExprId parent;
+	bool is_overlapping;
+	CChar* swizzle;
+}
+
+
+struct ExprCastable
+{
+	ExprId expr;
+	ExprId type;
+}
+
+
+struct ExprOtherContext
+{
+	Expr* inner;
+	SemaContext* context;
+	SourceLocId inline_at;
+	bool is_ref;
+}
+
+
+struct ExprDesignatedInit
+{
+	Expr** list;
+	Expr* splat;
+}
+
+
+struct ExprExtTrunc
+{
+	Expr* inner;
+	bool is_signed;
+}
+
+
+struct ExprIntToBool
+{
+	Expr* inner;
+	bool negate;
+}
+
+
+struct ExprMakeAny
+{
+	Expr* inner;
+	Expr* typeid_field;
+}
+
+
+struct ExprMakeSlice
+{
+	Expr* ptr;
+	ArrayIndex len;
+}
+
+
+struct Expr
+{
+	Type* type;
+	SourceLocId loc;
+	bitstruct : ushort
+	{
+		ExprKind expr_kind : 0..7;
+		ResolveStatus resolve_status : 8..11;
+	}
+	union
+	{
+		ExprResolvedAccess access_resolved_expr;
+		ExprUnresolvedAccess access_unresolved_expr;
+		ExprBinary binary_expr;
+		ExprBinary veccomp_expr;
+		ExprBodyExpansion body_expansion_expr;
+		ExprBuiltinAccess builtin_access_expr;
+		ExprBuiltin builtin_expr;
+		ExprCall call_expr;
+		ExprCast cast_expr;
+		ExprContract contract_expr;
+		ExprUnresolvedCatch unresolved_catch_expr;
+		ExprCatch catch_expr;
+		Expr** cond_expr;
+		ExprConst const_expr;
+		Expr** ct_concat;
+		ExprOtherContext expr_other_context;
+		ExprIdentifierRaw ct_ident_expr;
+		Decl* decl_expr;
+		Decl* iota_decl_expr;
+		ExprDesignatedInit designated_init;
+		ExprDesignator designator_expr;
+		ExprNamedArgument named_argument_expr;
+		ExprEvalNamedArgument eval_named_argument_expr;
+		ExprEmbedExpr embed_expr;
+		Expr** exec_expr;
+		ExprAsmArg expr_asm_arg;
+		ExprCompoundLiteral expr_compound_literal;
+		Expr** expression_list;
+		ExprIntToBool int_to_bool_expr;
+		ExprExtTrunc ext_trunc_expr;
+		ExprGenericIdent generic_ident_expr;
+		ExprDefaultArg default_arg_expr;
+		ExprIdentifierRaw hash_ident_expr;
+		ExprUnresolvedIdentifier unresolved_ident_expr;
+		Decl* ident_expr;
+		Expr** initializer_list;
+		Expr* inner_expr;
+		ExprMakeAny make_any_expr;
+		ExprMakeSlice make_slice_expr;
+		SubscriptIndex vaarg_index;
+		ExprTypeProperty type_property_expr;
+		Decl* lambda_expr;
+		ExprMacroBlock macro_block;
+		ExprMacroBody macro_body_expr;
+		Decl* member_get_expr;
+		OperatorOverload overload_expr;
+		ExprPointerOffset pointer_offset_expr;
+		ExprGuard rethrow_expr;
+		ExprSliceAssign slice_assign_expr;
+		ExprSubscriptAssign subscript_assign_expr;
+		ExprSubscript subscript_expr;
+		ExprCtSubscript ct_subscript_expr;
+		ExprSlice slice_expr;
+		ExprSwizzle swizzle_expr;
+		ExprTernary ternary_expr;
+		ExprTwo two_expr;
+		BuiltinDefine benchmark_hook_expr;
+		ExprTypeCall type_call_expr;
+		BuiltinDefine test_hook_expr;
+		Expr** try_unwrap_chain_expr;
+		ExprTry try_expr;
+		ExprUnresolvedTry unresolved_try_expr;
+		TypeInfo* type_expr;
+		TypeInfo* typeid_expr;
+		ExprTypeidInfo typeid_info_expr;
+		ExprUnary unary_expr;
+		Range vasplat_expr;
+	}
+}
+
+
+struct AstCompoundStmt
+{
+	AstId first_stmt;
+	AstId parent_defer;
+}
+
+
+struct AstReturnStmt
+{
+	Expr* expr;
+	AstId cleanup;
+	AstId cleanup_fail;
+	bool cleanup_catch;
+	BlockExit** block_exit_ref;
+}
+
+
+struct FlowCommon
+{
+	DeclId label;
+	bitstruct : char
+	{
+		bool has_break : 0..0;
+		bool no_exit : 1..1;
+		bool skip_first : 2..2;
+		bool if_chain : 3..3;
+		bool jump : 4..4;
+	}
+}
+
+
+struct AstIfStmt
+{
+	FlowCommon flow;
+	union
+	{
+		struct
+		{
+			ExprId cond;
+			AstId then_body;
+			AstId else_body;
+		}
+
+		struct codegen
+		{
+			union
+			{
+				void* break_block;
+				CInt tb_break_block;
+			}
+		}
+	}
+}
+
+
+struct AstCaseStmt
+{
+	ExprId expr;
+	ExprId to_expr;
+	CInt index;
+	Ast* body;
+	void* backend_block;
+}
+
+
+struct AstSwitchStmt
+{
+	FlowCommon flow;
+	Ast** cases;
+	union
+	{
+		struct
+		{
+			ExprId cond;
+			AstId defer_field;
+			Ast* scope_defer;
+		}
+
+		struct codegen
+		{
+			void* exit_block;
+			union
+			{
+				struct retry
+				{
+					void* block;
+					void* var_field;
+				}
+
+				struct jump
+				{
+					ushort count;
+					short min_index;
+					short default_index;
+					void* jmptable;
+				}
+			}
+		}
+	}
+}
+
+
+struct AstForStmt
+{
+	FlowCommon flow;
+	union
+	{
+		struct
+		{
+			ExprId cond;
+			ExprId incr;
+			ExprId init;
+			AstId body;
+		}
+
+		struct codegen
+		{
+			void* continue_block;
+			void* exit_block;
+		}
+	}
+}
+
+
+struct AstForeachStmt
+{
+	FlowCommon flow;
+	bitstruct : char
+	{
+		bool index_by_ref : 0..0;
+		bool value_by_ref : 1..1;
+		bool iterator : 2..2;
+		bool is_reverse : 3..3;
+	}
+	ExprId enumeration;
+	AstId body;
+	DeclId index;
+	DeclId variable;
+}
+
+
+struct AstDeferStmt
+{
+	AstId prev_defer;
+	AstId body;
+	void* scope;
+	bitstruct : char
+	{
+		bool is_try : 0..0;
+		bool is_catch : 1..1;
+	}
+}
+
+
+struct AstCtIfStmt
+{
+	Expr* expr;
+	AstId elif;
+	AstId then;
+}
+
+
+struct AstCtSwitchStmt
+{
+	ExprId cond;
+	Ast** body;
+}
+
+
+struct AstCtTypeAssignStmt
+{
+	CChar* var_name;
+	Expr* type_expr;
+}
+
+
+struct AstCtForeachStmt
+{
+	DeclId index;
+	DeclId value;
+	AstId body;
+	ExprId expr;
+}
+
+
+struct AstContinueBreakStmt
+{
+	bitstruct : char
+	{
+		bool is_label : 0..0;
+		bool is_resolved : 1..1;
+	}
+	AstId defers;
+	union
+	{
+		Label label;
+		AstId ast;
+	}
+}
+
+
+struct AstNextcaseStmt
+{
+	AstId defer_id;
+	bool is_resolved;
+	bool is_default;
+	bool is_expr;
+	union
+	{
+		struct
+		{
+			Label label;
+			ExprId expr;
+		}
+
+		struct
+		{
+			AstId switch_stmt;
+			union
+			{
+				CInt case_number;
+				Expr* nextcase_value;
+			}
+		}
+	}
+}
+
+
+struct AstAsmStmt
+{
+	CChar* instruction;
+	CChar* variant;
+	Expr** args;
+}
+
+
+struct AsmInlineBlock
+{
+	Clobbers clobbers;
+	AstId asm_stmt;
+	Ast** labels;
+	ExprAsmArg** output_vars;
+	ExprAsmArg** input;
+}
+
+
+struct AstAsmBlock
+{
+	bitstruct : char
+	{
+		bool is_volatile : 0..0;
+		bool is_inline : 1..1;
+		bool is_goto : 2..2;
+		bool is_string : 3..3;
+		bool is_aligned : 4..4;
+	}
+	union
+	{
+		AsmInlineBlock* block;
+		ExprId asm_string;
+	}
+}
+
+
+struct AstAssertStmt
+{
+	bool is_ensure;
+	ExprId message;
+	ExprId expr;
+	Expr** args;
+}
+
+
+struct Ast
+{
+	SourceLocId loc;
+	AstId next;
+	bitstruct : char
+	{
+		AstKind ast_kind : 0..7;
+	}
+	union
+	{
+		FlowCommon flow;
+		AstAsmBlock asm_block_stmt;
+		AstAsmStmt asm_stmt;
+		CChar* asm_label;
+		AstAssertStmt assert_stmt;
+		AstCaseStmt case_stmt;
+		AstCompoundStmt compound_stmt;
+		AstId ct_compound_stmt;
+		AstContinueBreakStmt contbreak_stmt;
+		AstId ct_else_stmt;
+		AstCtTypeAssignStmt ct_type_assign_stmt;
+		AstCtForeachStmt ct_foreach_stmt;
+		AstCtIfStmt ct_if_stmt;
+		AstCtSwitchStmt ct_switch_stmt;
+		Decl* declare_stmt;
+		Decl** decls_stmt;
+		AstDeferStmt defer_stmt;
+		Expr* expr_stmt;
+		Expr* expand_stmt;
+		AstForStmt for_stmt;
+		AstForeachStmt foreach_stmt;
+		AstIfStmt if_stmt;
+		AstNextcaseStmt nextcase_stmt;
+		AstReturnStmt return_stmt;
+		AstSwitchStmt switch_stmt;
+		Decl* var_stmt;
+	}
+}
+
+
+struct Module
+{
+	Path* name;
+	CChar* short_path;
+	CChar* extname;
+	Decl** generic_sections;
+	bitstruct : ushort
+	{
+		bool is_external : 0..0;
+		bool is_c_library : 1..1;
+		bool is_exported : 2..2;
+		bool no_extprefix : 3..3;
+		AnalysisStage stage : 4..9;
+	}
+	HTable symbols;
+	CompilationUnit** units;
+	Module* parent_module;
+	Module* top_module;
+	Decl** benchmarks;
+	Decl** tests;
+	Decl** lambdas_to_evaluate;
+	CInt lambda_count;
+	InliningSpan inlined_at;
+}
+
+
+struct EndJump
+{
+	bool active;
+	SourceLocId loc;
+}
+
+
+struct DynamicScope
+{
+	bitstruct : char
+	{
+		bool allow_dead_code : 0..0;
+		bool is_dead : 1..1;
+		bool is_poisoned : 2..2;
+	}
+	EndJump end_jump;
+	ScopeFlags flags;
+	CInt label_start;
+	CInt current_local;
+	AstId defer_last;
+	AstId defer_start;
+	Ast* in_defer;
+	CInt depth;
+}
+
+
+struct TokenData
+{
+	CChar* lex_start;
+	usz lex_len;
+	union
+	{
+		struct
+		{
+			CChar* string;
+			usz strlen;
+		}
+
+		struct
+		{
+			Float value;
+		}
+
+		struct
+		{
+			bitstruct : ulong
+			{
+				ulong is_base64 : 0..0;
+				ulong bytes_len : 1..63;
+			}
+		}
+
+		struct
+		{
+			Int128 char_value;
+			CChar width;
+		}
+	}
+}
+
+
+struct Lexer
+{
+	ParseContext* context;
+	CChar* file_begin;
+	CChar* lexing_start;
+	CChar* current;
+	uint current_row;
+	uint start_row;
+	CChar* line_start;
+	CChar* start_row_start;
+	File* file;
+	TokenData data;
+	SourceLoc tok_span;
+	TokenType token_type;
+	LexMode mode;
+}
+
+
+struct CompilationUnit
+{
+	Module* module_field;
+	File* file;
+	Decl** imports;
+	Decl** module_aliases;
+	Decl** public_imports;
+	Decl** types;
+	Decl** functions;
+	Decl** lambdas;
+	Decl** enums;
+	Decl** attributes;
+	Decl** faults;
+	CChar** links;
+	Visibility default_visibility;
+	bool default_is_weak;
+	Attr* if_attr;
+	Attr** feat_attributes;
+	Decl* default_generic_section;
+	Decl** generic_decls;
+	Decl** weak_symbols_skipped;
+	bool export_by_default;
+	bool is_interface_file;
+	bool benchmark_by_default;
+	bool test_by_default;
+	bool module_generated;
+	DeclId module_doc;
+	Attr** attr_links;
+	Decl** aliases;
+	Decl** ct_asserts;
+	Decl** ct_echos;
+	Decl** ct_includes;
+	Decl** vars;
+	Decl** macros;
+	Decl** methods_to_register;
+	Decl** methods;
+	Decl** macro_methods;
+	Decl** global_decls;
+	Decl** global_cond_decls;
+	Decl* main_function;
+	Decl* error_import;
+	HTable local_symbols;
+	TypeInfo** check_type_variable_array;
+
+	struct llvm
+	{
+		void* debug_file;
+		void* debug_compile_unit;
+	}
+}
+
+
+struct ContractDescription
+{
+	CChar* comment;
+	SourceLocId comment_span;
+	CInt comment_len;
+	Expr** requires;
+	Expr** ensures;
+	ContractParam* params;
+	bool pure;
+	bool has_contracts;
+	SourceLocId first;
+	SourceLocId first_variable_require;
+	SourceLocId first_non_require;
+	SourceLocId first_contract;
+	Expr** opt_returns;
+	CChar* return_desc;
+	Attr* deprecated;
+}
+
+
+struct ParseContext
+{
+	TokenData data;
+	TokenType tok;
+	SourceLoc span;
+	SourceLoc prev_span;
+	CompilationUnit* unit;
+	Lexer lexer;
+	ContractDescription contracts;
+}
+
+
+struct CallEnv
+{
+	bitstruct : ushort
+	{
+		CallEnvKind kind : 0..7;
+		bool ensures : 8..8;
+		bool pure : 9..9;
+		bool in_no_eval : 10..10;
+		bool is_naked_fn : 11..11;
+		bool ignore_deprecation : 12..12;
+	}
+	SourceLocId in_if_resolution;
+	Decl** opt_returns;
+	union
+	{
+		Decl* attr_declaration;
+		Decl* current_function;
+	}
+}
+
+
+struct JumpTarget
+{
+	Ast* target;
+	AstId defer_field;
+}
+
+
+struct SemaContext
+{
+	CompilationUnit* unit;
+	CompilationUnit* compilation_unit;
+	CallEnv call_env;
+	Decl* current_macro;
+	InliningSpan* inlined_at;
+	CInt macro_call_depth;
+	JumpTarget break_jump;
+	JumpTarget continue_jump;
+	JumpTarget next_jump;
+	AstId block_return_defer;
+	Ast* next_switch;
+
+	struct
+	{
+		uint original_inline_line;
+		Module* original_module;
+		Decl** yield_params;
+		Ast* yield_body;
+		BlockExit** block_exit_ref;
+		Type* expected_block_type;
+		Ast** block_returns;
+		Expr** macro_varargs;
+		bool macro_has_vaargs;
+		Decl** macro_params;
+		bool macro_has_ensures;
+		Decl** ct_locals;
+	}
+	Type* rtype;
+	SemaContext* yield_context;
+	Decl** locals;
+	DynamicScope active_scope;
+	Expr* return_expr;
+	bool is_temp;
+	Decl* generic_infer;
+	Decl* generic_instance;
+}
+
+constdef AbiSpecType : CUInt
+{
+	ABI_TYPE_INT_24         = 1,
+	ABI_TYPE_INT_40         = 3,
+	ABI_TYPE_INT_48         = 5,
+	ABI_TYPE_INT_56         = 7,
+	ABI_TYPE_INT_VEC_2      = 9,
+	ABI_TYPE_INT_VEC_4      = 11,
+	ABI_TYPE_FLOAT_VEC_2    = 13,
+	ABI_TYPE_FLOAT_VEC_4    = 15,
+	ABI_TYPE_LONG_VEC_2     = 17,
+	ABI_TYPE_FLOAT16_VEC_2  = 19,
+	ABI_TYPE_FLOAT16_VEC_4  = 21,
+	ABI_TYPE_BFLOAT16_VEC_2 = 23,
+	ABI_TYPE_BFLOAT16_VEC_4 = 25,
+	ABI_TYPE_DOUBLE_VEC_2   = 27,
+	ABI_TYPE_DOUBLE_VEC_4   = 29,
+	ABI_TYPE_DOUBLE_VEC_8   = 31
+}
+
+
+struct AbiType
+{
+	union
+	{
+		Type* type;
+		AbiSpecType abi_type;
+	}
+}
+
+
+struct ABIArgInfo
+{
+	bitstruct : ulong
+	{
+		ArrayIndex param_index_start : 0..15;
+		ArrayIndex param_index_end : 16..31;
+		ABIKind kind : 32..37;
+	}
+
+	struct attributes
+	{
+		bitstruct : ushort
+		{
+			bool by_reg : 0..0;
+			bool zeroext : 1..1;
+			bool signext : 2..2;
+			bool realign : 3..3;
+			bool by_val : 4..4;
+			char stack_align : 5..9;
+		}
+	}
+	union
+	{
+		struct direct_pair
+		{
+			AbiType lo;
+			AbiType hi;
+		}
+
+		struct coerce_expand
+		{
+			char offset_hi;
+			bool packed;
+			Type* lo;
+			Type* hi;
+		}
+		AbiType direct_coerce_type;
+		char direct_struct_expand;
+
+		struct indirect
+		{
+			AlignSize alignment;
+			Type* type;
+		}
+	}
+	Type* original_type;
+	ParamRewrite rewrite;
+}
+
+
+struct ParamInfo
+{
+	Type* type;
+	ParamRewrite rewrite;
+}
+
+
+struct FunctionPrototype
+{
+	CUShort vararg_index;
+	bitstruct : char
+	{
+		CallABI call_abi : 0..3;
+		bool raw_variadic : 4..4;
+		bool use_win64 : 5..5;
+		bool is_resolved : 6..6;
+	}
+	bitstruct : uint
+	{
+		RetValType ret_rewrite : 7..14;
+		ParamRewrite return_rewrite : 15..17;
+	}
+	ParamInfo return_info;
+	Type* return_result;
+	CInt param_count;
+	CUShort param_vacount;
+	ABIArgInfo* ret_abi_info;
+	ABIArgInfo** abi_args;
+	ABIArgInfo** abi_varargs;
+	Type* raw_type;
+}
+
+
+struct NameResolve
+{
+	Decl* ambiguous_other_decl;
+	Decl* private_decl;
+	Decl* maybe_decl;
+	Decl* found;
+	Path* path;
+	SourceLocId loc;
+	CChar* symbol;
+	Module* path_found;
+	bool suppress_error;
+	bool is_parameterized;
+	bool is_generic_parent;
+}
+
+
+struct CopyFixup
+{
+	void* original;
+	void* new_ptr;
+}
+
+
+struct CopyStruct
+{
+	CopyFixup[1048575] fixups;
+	CopyFixup* current_fixup;
+	bool single_static;
+	bool copy_in_use;
+	bool is_template;
+	DeclId instance_id;
+}
+
+
+struct Linking
+{
+	CChar** links;
+	bool link_math;
+}
+
+
+struct GlobalContext
+{
+	bool should_print_environment;
+	bool should_print_asm;
+	Ansi ansi;
+	HTable modules;
+	Module* core_module;
+	CInt generic_id_counter;
+	CompilationUnit* core_unit;
+	Module** module_list;
+	Type** type;
+	CChar* lib_dir;
+	CChar** sources;
+	File** loaded_sources;
+	bitstruct : char
+	{
+		bool in_panic_mode : 0..0;
+	}
+	CInt errors_found;
+	CInt warnings_found;
+	CInt includes_used;
+	Decl*** locals_list;
+	HTable compiler_defines;
+	HTable features;
+	Module std_module;
+	MethodTable method_extensions;
+	Decl** unregistered_method_specializations;
+	Decl** unregistered_generic_decls;
+	Type** types_with_failed_methods;
+	Decl** method_extension_list;
+	DeclTable symbols;
+	PathTable path_symbols;
+	Path std_module_path;
+	Type* string_type;
+	Decl* panic_var;
+	Decl* panicf;
+	Decl* io_error_file_not_found;
+	Decl* main;
+	Decl*[65536] decl_stack;
+	Decl** decl_stack_bottom;
+	Decl** decl_stack_top;
+}
+
+
+struct CompilerState
+{
+	BuildTarget build;
+	PlatformTarget platform;
+	Linking linking;
+	GlobalContext context;
+	CChar* obj_output;
+	CInt generic_depth;
+	double exec_time;
+	double script_time;
+	CChar* base_dir;
+}
+
+alias CharId = CUInt;
+
+alias AstId = CUInt;
+
+alias ExprId = CUInt;
+
+alias DeclId = CUInt;
+
+alias TypeInfoId = CUInt;
+
+alias SourceLocId = CUInt;
+
+constdef FindMember : CUInt
+{
+	METHODS_AND_FIELDS            = 0,
+	METHODS_INTERFACES_AND_FIELDS = 1,
+	FIELDS_ONLY                   = 2
+}
