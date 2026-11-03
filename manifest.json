@@ -1,6 +1,6 @@
 {
   "provides" : "c3c_ast",
-  "sources" : [ "src/**"],
+  "sources" : [ "src/**", "c3c.c3i" ],
   "targets" : {
     "android-aarch64" : {
       // Extra flags to the linker for this target:
