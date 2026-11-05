@@ -47,6 +47,7 @@ fn int main(String[] args)
 				case "module":
 				case "alias":
 				case "defer":
+				case "distinct":
 				case "import":
 				case "var":
 				case "macro":

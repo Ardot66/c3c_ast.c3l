@@ -69,6 +69,7 @@ fn void*? find_segment(String name) {
 }
 
 fn void? read_dump(Process* process) {
+	sz total_read = 0;
 	while(true) {
 		DumpSegment segment;
 		read_stdout(process, &segment, DumpSegment::size)!;
@@ -97,6 +98,7 @@ fn void? read_dump(Process* process) {
 		while(read < segment.length) {
 			read += process.read_stdout(segment.start + read, segment.length - read)!;
 		}
+		total_read += read;
 
 		if(!segment.next_segment_exists) {
 			break;
@@ -105,6 +107,7 @@ fn void? read_dump(Process* process) {
 
 	ast::context = {
 		... ast::context,
+		.bytes_read = total_read,
 		.global = find_segment("global_context")!,
 		.ast_arena = find_segment("ast_arena")!,
 		.expr_arena = find_segment("expr_arena")!,

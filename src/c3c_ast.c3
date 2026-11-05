@@ -11,6 +11,9 @@ struct AstSettings {
 
 struct AstContext {
 	AstSettings settings;
+
+	sz bytes_read;
+
     GlobalContext* global;
     Ast* ast_arena;
     Expr* expr_arena;
@@ -30,7 +33,7 @@ fn GlobalContext*? load_ast(String[] c3c_args, AstSettings settings = {.verbose,
 	internal::context.loaded = true;
 	context.settings = settings;
 	
-	Process process = process::spawn({"c3cdev", "build", "--ast-dump"})!;
+	Process process = process::spawn(c3c_args)!;
 	defer {
 		process.join()!!;
 		process.destroy();

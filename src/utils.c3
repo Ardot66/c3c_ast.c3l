@@ -7,6 +7,8 @@ struct VecHeader {
 	char[*] data;
 }
 
+macro bool @is_vec(#vec) @const => $Typeof(#vec)::kind == POINTER &&& $Typeof(#vec)::inner.kind == POINTER;
+
 fn VecHeader* vec_header(void* vec) @local {
 	return vec - VecHeader::size;
 }
@@ -16,7 +18,14 @@ fn int vec_size(void* vec) {
 }
 
 <*
- @require $Typeof(vec)::kind == POINTER &&& $Typeof(vec)::inner.kind == POINTER : "The passed vector must be a pointer to a pointer."
+ @require @is_vec(vec) : "The passed vector must be a pointer to a pointer."
+*>
+macro vec(vec) {
+	return vec[0..vec_size(vec) - 1];
+}
+
+<*
+ @require @is_vec(vec) : "The passed vector must be a pointer to a pointer."
 *>
 macro @vec_foreach(vec; @body(element)) {
 	if(vec == null) {

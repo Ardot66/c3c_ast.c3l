@@ -3759,7 +3759,7 @@ struct Decl
 
 				struct
 				{
-					TypeInfo* distinct;
+					TypeInfo* distinct_field;
 					Expr* distinct_align;
 				}
 				StructDecl strukt;
