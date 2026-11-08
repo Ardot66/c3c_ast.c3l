@@ -96,7 +96,12 @@ fn void? read_dump(Process* process) {
 
 		sz read = 0;
 		while(read < segment.length) {
-			read += process.read_stdout(segment.start + read, segment.length - read)!;
+			sz? just_read = process.read_stdout(segment.start + read, segment.length - read);
+			if(catch err = just_read) {
+				print_verbose("Failed to read dump segment after %s bytes.", read);
+				return err~;
+			}
+			read += just_read;
 		}
 		total_read += read;
 

@@ -21,7 +21,7 @@ fn int vec_size(void* vec) {
  @require @is_vec(vec) : "The passed vector must be a pointer to a pointer."
 *>
 macro vec(vec) {
-	return vec[0..vec_size(vec) - 1];
+	return vec ? vec[0..vec_size(vec) - 1] : {};
 }
 
 <*
