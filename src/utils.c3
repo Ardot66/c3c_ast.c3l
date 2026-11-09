@@ -14,7 +14,7 @@ fn VecHeader* vec_header(void* vec) @local {
 }
 
 fn int vec_size(void* vec) {
-	return vec_header(vec).size;
+	return vec ? vec_header(vec).size : 0;
 }
 
 <*
