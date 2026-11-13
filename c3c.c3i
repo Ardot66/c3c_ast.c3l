@@ -134,6 +134,51 @@ constdef TestLogLevel : CInt
 	TESTLOGLEVEL_CRITICAL =  5
 }
 
+constdef PanicFunction : CUInt
+{
+	PANIC_FN_MESSAGE              = 0,
+	PANIC_FN_ASSERT               = 1,
+	PANIC_FN_ASSERT_VIOLATION     = 2,
+	PANIC_FN_REQUIRE              = 3,
+	PANIC_FN_REQUIRE_MESSAGE      = 4,
+	PANIC_FN_ENSURE               = 5,
+	PANIC_FN_ENSURE_MESSAGE       = 6,
+	PANIC_FN_REF_PARAM            = 7,
+	PANIC_FN_REF_ARG              = 8,
+	PANIC_FN_NULL_METHOD          = 9,
+	PANIC_FN_NULL_POINTER         = 10,
+	PANIC_FN_DEREF                = 11,
+	PANIC_FN_NULL_FUNCTION        = 12,
+	PANIC_FN_NO_METHOD            = 13,
+	PANIC_FN_ADD_OVERFLOW         = 14,
+	PANIC_FN_SUB_OVERFLOW         = 15,
+	PANIC_FN_MUL_OVERFLOW         = 16,
+	PANIC_FN_NEG_OVERFLOW         = 17,
+	PANIC_FN_DIV_ZERO             = 18,
+	PANIC_FN_REM_ZERO             = 19,
+	PANIC_FN_INFINITE_LOOP        = 20,
+	PANIC_FN_ACCESS_INNER         = 21,
+	PANIC_FN_ACCESS_NAMES         = 22,
+	PANIC_FN_ACCESS_LEN           = 23,
+	PANIC_FN_UNALIGNED            = 24,
+	PANIC_FN_UNWRAP               = 25,
+	PANIC_FN_SHIFT                = 26,
+	PANIC_FN_INDEX                = 27,
+	PANIC_FN_INDEX_NEGATIVE       = 28,
+	PANIC_FN_INDEX_BOUNDS         = 29,
+	PANIC_FN_SLICE                = 30,
+	PANIC_FN_SLICE_START          = 31,
+	PANIC_FN_SLICE_START_NEGATIVE = 32,
+	PANIC_FN_SLICE_LEN_NEGATIVE   = 33,
+	PANIC_FN_SLICE_END            = 34,
+	PANIC_FN_SLICE_RANGE_NEGATIVE = 35,
+	PANIC_FN_SLICE_COPY           = 36,
+	PANIC_FN_ENUM_NEGATIVE        = 37,
+	PANIC_FN_ENUM_RANGE           = 38,
+	PANIC_FN_ASSERT_ARGS          = 39,
+	PANIC_FN_COUNT                = 40
+}
+
 constdef PanicLevel : CInt
 {
 	PANIC_NOT_SET = -1,
@@ -147,6 +192,23 @@ constdef ValidationLevel : CInt
 	VALIDATION_LENIENT   =  0,
 	VALIDATION_STRICT    =  1,
 	VALIDATION_OBNOXIOUS =  2
+}
+
+constdef FileKind : CUInt
+{
+	FILE_KIND_SOURCE    = 0,
+	FILE_KIND_STDIN     = 1,
+	FILE_KIND_TEXT      = 2,
+	FILE_KIND_GENERATED = 3
+}
+
+constdef StatsMode : CInt
+{
+	STATS_NOT_SET = -1,
+	STATS_NONE    =  0,
+	STATS_SUMMARY =  1,
+	STATS_FULL    =  2,
+	STATS_JSON    =  3
 }
 
 constdef Ansi : CInt
@@ -175,6 +237,13 @@ constdef MergeFunctions : CInt
 	MERGE_FUNCTIONS_NOT_SET = -1,
 	MERGE_FUNCTIONS_OFF     =  0,
 	MERGE_FUNCTIONS_ON      =  1
+}
+
+constdef InfiniteLoopDetect : CInt
+{
+	INFINITE_LOOP_DETECT_NOT_SET = -1,
+	INFINITE_LOOP_DETECT_OFF     =  0,
+	INFINITE_LOOP_DETECT_ON      =  1
 }
 
 constdef SectionsSetting : CInt
@@ -856,13 +925,14 @@ constdef BuiltinDefine : CUInt
 	BUILTIN_DEF_LINE            = 5,
 	BUILTIN_DEF_LINE_RAW        = 6,
 	BUILTIN_DEF_MODULE          = 7,
-	BUILTIN_DEF_BENCHMARK_NAMES = 8,
-	BUILTIN_DEF_BENCHMARK_FNS   = 9,
-	BUILTIN_DEF_TEST_NAMES      = 10,
-	BUILTIN_DEF_TEST_FNS        = 11,
-	BUILTIN_DEF_TIME            = 12,
-	BUILTIN_DEF_NONE            = 13,
-	NUMBER_OF_BUILTIN_DEFINES   = 13
+	BUILTIN_DEF_PANIC_FN        = 8,
+	BUILTIN_DEF_BENCHMARK_NAMES = 9,
+	BUILTIN_DEF_BENCHMARK_FNS   = 10,
+	BUILTIN_DEF_TEST_NAMES      = 11,
+	BUILTIN_DEF_TEST_FNS        = 12,
+	BUILTIN_DEF_TIME            = 13,
+	BUILTIN_DEF_NONE            = 14,
+	NUMBER_OF_BUILTIN_DEFINES   = 14
 }
 
 constdef BuiltinFunction : CUInt
@@ -2369,7 +2439,6 @@ struct BuildOptions
 	bool test_noleak;
 	bool test_show_output;
 	bool benchmark_csv_report;
-	bool print_large_functions;
 	CChar* custom_linker_path;
 	uint symtab_size;
 	CUInt version;
@@ -2402,13 +2471,13 @@ struct BuildOptions
 	SingleModule single_module;
 	UnrollLoops unroll_loops;
 	MergeFunctions merge_functions;
+	InfiniteLoopDetect infinite_loop_detect;
 	SectionsSetting function_sections;
 	SectionsSetting data_sections;
 	AutoVectorization loop_vectorization;
 	AutoVectorization slp_vectorization;
 	bool emit_llvm;
 	bool emit_asm;
-	bool benchmark_mode;
 	bool test_mode;
 	bool lsp_mode;
 	bool ast_dump_mode;
@@ -2438,6 +2507,8 @@ struct BuildOptions
 	bool macos_fetch_sdk_list;
 	CChar** fetch_sdk_archs;
 	CInt verbosity_level;
+	StatsMode stats_mode;
+	CChar* stats_file;
 	CChar* panicfn;
 	CChar* benchfn;
 	CChar* testfn;
@@ -2498,231 +2569,6 @@ struct AuthorEntry
 {
 	CChar* author;
 	CChar* email;
-}
-
-
-struct LibraryTarget
-{
-	Library_* parent;
-	ArchOsTarget arch_os;
-	CChar* cc;
-	CChar* cflags;
-	WinCrtLinking win_crt;
-	CChar** source_dirs;
-	CChar** csource_dirs;
-	CChar** csources;
-	CChar** cinclude_dirs;
-	CChar** execs;
-	CChar** link_flags;
-	CChar** linked_libs;
-	CChar** dependencies;
-}
-
-
-struct Library_
-{
-	CChar* dir;
-	CChar* provides;
-	CChar* linklib_dir;
-	CChar** dependencies;
-	CChar** execs;
-	CChar* cc;
-	CChar* cflags;
-	CChar** source_dirs;
-	CChar** csource_dirs;
-	CChar** cinclude_dirs;
-	WinCrtLinking win_crt;
-	LibraryTarget* target_used;
-	LibraryTarget** targets;
-}
-
-alias Library = Library_;
-
-
-struct BuildTarget
-{
-	TargetType type;
-	Library** library_list;
-	LibraryTarget** ccompiling_libraries;
-	CChar* name;
-	CChar* runner_output_name;
-	CChar* output_name;
-	CChar* extension;
-	CChar* version;
-	CChar* langrev;
-	CChar** source_dirs;
-	CChar** test_source_dirs;
-	CChar** sources;
-	CChar** object_files;
-	CChar** llvm_ir_files;
-	CChar** libdirs;
-	CChar** libs;
-	CChar** linker_libdirs;
-	CChar** linker_libs;
-	CChar* cpu;
-	CChar* echo_prefix;
-	CChar** link_args;
-	CChar* build_dir;
-	CChar* project_dir;
-	CChar* object_file_dir;
-	CChar* output_dir;
-	CChar* ir_file_dir;
-	CChar* asm_file_dir;
-	CChar* header_file_dir;
-	CChar* script_dir;
-	CChar* exec_dir;
-	CChar* run_dir;
-	CChar** emit_only;
-	bool is_non_project;
-	bool run_after_compile;
-	bool delete_after_run;
-	bool generate_benchmark_runner;
-	bool generate_test_runner;
-	bool benchmark_output;
-	bool test_output;
-	bool lsp_output;
-	bool ast_dump_output;
-	bool docgen;
-	bool docgen_json_out;
-	bool docgen_append;
-	bool output_headers;
-	bool no_compress;
-	bool output_ast;
-	bool lex_only;
-	bool parse_only;
-	bool check_only;
-	bool emit_llvm;
-	bool emit_asm;
-	bool emit_object_files;
-	bool keep_object_files;
-	bool build_benchmark;
-	bool build_test;
-	bool silent;
-	bool quiet;
-	bool read_stdin;
-	bool print_output;
-	bool print_input;
-	bool print_linking;
-	bool no_entry;
-	bool kernel_build;
-	bool print_stats;
-	bool single_threaded;
-	bool print_large_functions;
-	CInt build_threads;
-	TrustLevel trust_level;
-	OptimizationSetting optsetting;
-	OptimizationLevel optlevel;
-	MemoryEnvironment memory_environment;
-	SizeOptimizationLevel optsize;
-	SingleModule single_module;
-	ValidationLevel validation_level;
-	UseStdlib use_stdlib;
-	EmitStdlib emit_stdlib;
-	LinkLibc link_libc;
-	CustomLibc custom_libc;
-	ShowBacktrace show_backtrace;
-	StripUnused strip_unused;
-	DebugInfo debug_info;
-	SectionsSetting function_sections;
-	SectionsSetting data_sections;
-	MergeFunctions merge_functions;
-	UnrollLoops unroll_loops;
-	AutoVectorization loop_vectorization;
-	AutoVectorization slp_vectorization;
-	RelocModel reloc_model;
-	ArchOsTarget arch_os_target;
-	CompilerBackend backend;
-	LinkerType linker_type;
-	StackProbe stack_probe;
-	StackProtector stack_protector;
-	uint stack_probe_size;
-	CChar* cpu_flags;
-	int symtab_size;
-	int max_vector_size;
-	int max_stack_object_size;
-	int max_macro_iterations;
-	int switchrange_max_size;
-	int switchjump_max_size;
-	CChar** args;
-	CChar* panicfn;
-	CChar* benchfn;
-	CChar* testfn;
-	CChar* cc;
-	CChar* cflags;
-	CChar** csource_dirs;
-	CChar** csources;
-	CChar** cinclude_dirs;
-	CChar** exec;
-	CChar** env;
-	CChar* env_expand_error;
-	CChar** depends_on;
-	AuthorEntry* authors;
-	CChar** feature_list;
-	CChar* custom_linker_path;
-	Warnings warnings;
-
-	struct feature
-	{
-		WinDebug win_debug;
-		bitstruct : uint
-		{
-			SoftFloat soft_float : 0..2;
-			StructReturn x86_struct_return : 3..5;
-			X86VectorCapability x86_vector_capability : 6..9;
-			RiscvAbi riscv_abi : 10..13;
-			RiscvCpuSet riscv_cpu_set : 14..17;
-			Win64Simd pass_win64_simd_as_arrays : 18..20;
-			bool trap_on_wrap : 21..21;
-			bool sanitize_address : 22..22;
-			bool sanitize_memory : 23..23;
-			bool sanitize_thread : 24..24;
-			ImplicitFloat implicit_float : 25..27;
-		}
-		FpOpt fp_math;
-		SafetyLevel safe_mode;
-		PanicLevel panic_level;
-		X86CpuSet x86_cpu_set;
-	}
-
-	struct macos
-	{
-		CChar* sysroot;
-		CChar* min_version;
-		CChar* sdk_version;
-		DarwinSDK* sdk;
-	}
-
-	struct ios
-	{
-		CChar* sysroot;
-		CChar* min_version;
-		CChar* sdk_version;
-		DarwinSDK* sdk;
-		bool simulator;
-	}
-
-	struct win
-	{
-		CChar* sdk;
-		CChar* def;
-		CChar* vs_dirs;
-		WinSubsystem subsystem;
-		WinCrtLinking crt_linking;
-	}
-
-	struct linuxpaths
-	{
-		LinuxLibc libc;
-		CChar* crt;
-		CChar* crtbegin;
-	}
-
-	struct android
-	{
-		CChar* ndk_path;
-		CInt api_version;
-	}
-	CChar* bsd_sysroot;
 }
 
 
@@ -2944,9 +2790,9 @@ alias ByteSize = long;
 
 alias TypeSize = int;
 
-alias IndexDiff = int;
+alias IndexDiff = long;
 
-alias ArrayIndex = int;
+alias ArrayIndex = long;
 
 alias StructIndex = short;
 
@@ -3103,6 +2949,7 @@ struct ExprConst
 struct File
 {
 	FileId file_id;
+	FileKind kind;
 	CChar* contents;
 	usz content_len;
 	CChar* name;
@@ -3214,6 +3061,7 @@ struct Type
 {
 	TypeKind type_kind;
 	bool is_live;
+	Module* traced_module;
 	CanonicalType* canonical;
 	CChar* name;
 	Type** type_cache;
@@ -4710,9 +4558,14 @@ struct AstAsmBlock
 struct AstAssertStmt
 {
 	bool is_ensure;
+	bitstruct : char
+	{
+		PanicFunction panic_function : 0..7;
+	}
 	ExprId message;
 	ExprId expr;
 	Expr** args;
+	CChar*[2] panic_text;
 }
 
 
@@ -5167,6 +5020,100 @@ struct Linking
 }
 
 
+struct FunctionAnalysisTime
+{
+	Decl* decl;
+	double time;
+}
+
+constdef StatsOrigin : CUInt
+{
+	STATS_ORIGIN_USER      = 0,
+	STATS_ORIGIN_STDLIB    = 1,
+	STATS_ORIGIN_RUNTIME   = 2,
+	STATS_ORIGIN_GENERATED = 3,
+	STATS_ORIGIN_NONE      = 4
+}
+
+
+struct StatsEntry
+{
+	CChar* name;
+	CInt id;
+	StatsOrigin origin;
+	CInt instances;
+	long instructions;
+	long lines;
+	double analysis_time;
+	double ir_gen_time;
+	double codegen_time;
+}
+
+
+struct StatsList
+{
+	StatsEntry* top;
+	StatsEntry other;
+	CInt other_count;
+	StatsEntry total;
+}
+
+
+struct StatsOriginTotals
+{
+	CInt files;
+	long lines;
+	CInt functions;
+	long ir_instructions;
+	double codegen_time;
+}
+
+
+struct CompilerStats
+{
+	double init_time;
+	double parsing_time;
+	double sema_time;
+	double ir_gen_time;
+	double codegen_time;
+	double link_time;
+	double generic_time;
+	CInt generic_depth;
+	double nested_analysis_time;
+	double codegen_thread_time;
+	CInt codegen_tasks;
+	CInt codegen_threads;
+	CChar* linker;
+	CInt source_files;
+	long source_lines;
+	CInt functions;
+	CInt types;
+	CInt generic_instances;
+	long ir_instructions;
+	long object_size;
+	StatsOriginTotals[4] origins;
+	long ast_memory;
+	long decl_memory;
+	long expr_memory;
+	long type_info_memory;
+	long sourceloc_memory;
+	FunctionAnalysisTime* function_analysis_times;
+	StatsList generic_list;
+	StatsList generic_function_list;
+	StatsList function_list;
+	StatsList module_size_list;
+	StatsList module_time_list;
+	bool printed;
+}
+
+
+struct PanicVariant
+{
+	PanicFunction id;
+	Type*[4] types;
+}
+
+
 struct GlobalContext
 {
 	bool should_print_environment;
@@ -5202,7 +5149,8 @@ struct GlobalContext
 	Path std_module_path;
 	Type* string_type;
 	Decl* panic_var;
-	Decl* panicf;
+	Decl* panic_fn;
+	PanicVariant* panic_variants;
 	Decl* io_error_file_not_found;
 	Decl* main;
 	Decl*[65536] decl_stack;
@@ -5211,17 +5159,13 @@ struct GlobalContext
 }
 
 
-struct CompilerState
+struct PanicFunctionDescriptor
 {
-	BuildTarget build;
-	PlatformTarget platform;
-	Linking linking;
-	GlobalContext context;
-	CChar* obj_output;
-	CInt generic_depth;
-	double exec_time;
-	double script_time;
-	CChar* base_dir;
+	CChar* name;
+	CChar* format;
+	CChar* summary;
+	CInt text_count;
+	CInt value_count;
 }
 
 alias CharId = CUInt;

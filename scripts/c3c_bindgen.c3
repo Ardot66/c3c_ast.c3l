@@ -66,7 +66,7 @@ fn int main(String[] args)
 				return "Abi";
 			} else if(name.ends_with("_")) {
 				return name[..^2].copy(alloc);
-			} else if(name.starts_with("Zip")) {
+			} else if(name.starts_with("Zip") || name.starts_with("Library") || name == "CompilerState") {
 				return "";
 			}
 
