@@ -4168,7 +4168,7 @@ struct ExprCastable
 struct ExprOtherContext
 {
 	Expr* inner;
-	SemaContext* context;
+	C3SemaContext* context;
 	SourceLocId inline_at;
 	bool is_ref;
 }
@@ -4826,7 +4826,7 @@ struct JumpTarget
 }
 
 
-struct SemaContext
+struct C3SemaContext
 {
 	CompilationUnit* unit;
 	CompilationUnit* compilation_unit;
@@ -4856,7 +4856,7 @@ struct SemaContext
 		Decl** ct_locals;
 	}
 	Type* rtype;
-	SemaContext* yield_context;
+	C3SemaContext* yield_context;
 	Decl** locals;
 	DynamicScope active_scope;
 	Expr* return_expr;
@@ -5114,7 +5114,7 @@ struct PanicVariant
 }
 
 
-struct GlobalContext
+struct C3GlobalContext
 {
 	bool should_print_environment;
 	bool should_print_asm;

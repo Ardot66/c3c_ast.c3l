@@ -62,11 +62,18 @@ fn int main(String[] args)
 			}
 		},
 		.type = fn String(String name, Allocator alloc) {
-			if(name == "ABI") {
-				return "Abi";
-			} else if(name.ends_with("_")) {
-				return name[..^2].copy(alloc);
-			} else if(name.starts_with("Zip") || name.starts_with("Library") || name == "CompilerState") {
+			if(name.ends_with("_")) {
+				name = name[..^2];
+			}
+
+			switch(name) {
+				case "ABI": return "Abi";
+				case "GlobalContext": return "C3GlobalContext";
+				case "SemaContext": return "C3SemaContext";
+				case "CompilerState": return "";
+			}
+
+			if(name.starts_with("Zip") || name.starts_with("Library")) {
 				return "";
 			}
 
@@ -83,7 +90,7 @@ fn int main(String[] args)
 				case "Expr":
 				case "Module":
 				case "Type":
-				case "SemaContext":
+				case "C3SemaContext":
 					return "";
 				case "charId":
 					return "CharId";

@@ -14,7 +14,7 @@ struct AstContext {
 
 	sz bytes_read;
 
-    GlobalContext* global;
+    C3GlobalContext* global;
     Ast* ast_arena;
     Expr* expr_arena;
     Decl* decl_arena;
@@ -29,7 +29,7 @@ excuse {C3C_ERROR}
 <*
  @require !internal::context.loaded : "An Ast is already loaded"
 *>
-fn GlobalContext*? load_ast(String[] c3c_args, AstSettings settings = {.verbose, .print_stderr}) {
+fn C3GlobalContext*? load_ast(String[] c3c_args, AstSettings settings = {.verbose, .print_stderr}) {
 	internal::context.loaded = true;
 	context.settings = settings;
 	
@@ -67,4 +67,4 @@ fn void free_ast() {
 	}
 }
 
-fn GlobalContext* gc() => context.global;
+fn C3GlobalContext* gc() => context.global;
