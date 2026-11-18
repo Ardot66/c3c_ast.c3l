@@ -139,7 +139,7 @@ fn bool print_stderr(Process* process) {
 		if(read > 0) {
 			error = true;
 			if(ast::context.settings.print_stderr) {
-				io::print((String)buffer[..read - 1]);
+				io::eprint((String)buffer[..read - 1]);
 			}
 		}
 	}
