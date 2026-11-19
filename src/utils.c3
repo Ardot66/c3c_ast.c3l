@@ -79,3 +79,28 @@ macro String const_name(value) {
 	$endforeach
 	return "INVALID_CONST_VALUE";
 }
+
+fn Expr*[] eval_untyped_list(Expr *expr) {
+	ExprConst* const_values = &expr.const_expr;
+	assert(const_values.const_kind == CONST_UNTYPED_LIST);
+
+	Expr** values = const_values.untyped_list;
+	return ast::vec(values);
+}
+
+fn long eval_const_enum(Expr* expr) {
+	ExprConst* enum_const = &expr.const_expr;
+	assert(enum_const.const_kind == CONST_ENUM);
+
+	EnumConstantDecl* enum_decl = &enum_const.enum_val.enum_constant;
+	assert(!enum_decl.is_raw);
+
+	return enum_decl.inner_ordinal;
+}
+
+fn long eval_const_int(Expr* expr) {
+	ExprConst* const_value = &expr.const_expr;
+	assert(const_value.const_kind == CONST_INTEGER);
+
+	return (long)const_value.ixx.i.low;
+}
